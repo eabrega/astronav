@@ -1,0 +1,1800 @@
+$STORAGE:2
+$DEBUG
+      SUBROUTINE SOPR(AS,A)
+C*********************************************************
+C       / „‹Ÿ €‘—…’€ Š‚€’…ˆŽ€,‘ŽŸ†…ŽƒŽ ‘ „€›Œ*
+C--------------------------------------------------------*
+C       ‚•Ž„    €       ˆ‘•Ž„›‰ Š‚€’…ˆŽ              *
+C       ‚›•Ž„   AS      ‘ŽŸ†…›‰ Š‚€’…ˆŽ           *
+C--------------------------------------------------------*
+      REAL*4 A(4),AS(4)
+      AS(1)=A(1)
+      AS(2)=-A(2)
+      AS(3)=-A(3)
+      AS(4)=-A(4)
+      RETURN
+      END
+      SUBROUTINE KWATM(R,U)
+C**********************************************************
+C       / „‹Ÿ €‘—…’€ ŠŽŒŽ…’Ž‚ Š‚€’…ˆŽ€ Ž “ƒ‹€Œ  *
+C       Š›‹Ž‚€                                           *
+C.........................................................*
+C       ‚•Ž„    R       Œ€‘‘ˆ‚ “ƒ‹Ž‚ Š›‹Ž‚€              *
+C       ‚›•Ž„   U       Š‚€’…ˆŽ                        *
+C**********************************************************
+      REAL R(3),U(4)
+      DOUBLE PRECISION S1,S2,S3,C1,C2,C3,U1,U2,U3
+      U1=R(1)*3.141592653D0/360.D0
+      U2=R(2)*3.141592653D0/360.D0
+      U3=R(3)*3.141592653D0/360.D0
+      S1=DSIN(U1)
+      S2=DSIN(U2)
+      S3=DSIN(U3)
+      C1=DCOS(U1)
+      C2=DCOS(U2)
+      C3=DCOS(U3)
+      U(1)=C2*C1*C3+S2*S1*S3
+      U(2)=S2*C1*C3+C2*S1*S3
+      U(3)=C2*S1*C3-S2*C1*S3
+      U(4)=C2*C1*S3-S2*S1*C3
+      RETURN
+      END
+      SUBROUTINE KVTUKR(R,UK,P)
+C************************************************************
+C    …Ž€‡Ž‚€ˆ… Š‚€’…ˆŽ€ ‚ “ƒ‹› Š›‹Ž‚€              *
+C    Ž‘‹…„Ž‚€’…‹œŽ‘’œ €‡‚ŽŽ’Ž‚: Y - X - Z               *
+C    “ƒ‹› ‚›„€ž’‘Ÿ ‚ ˆ’…‚€‹…  -180 „Ž +180                *
+C-----------------------------------------------------------*
+C  ‚•Ž„:   R(0:3) - Š‚€’…ˆŽ, Žˆ‘›‚€…Œ›‰ “ƒ‹€Œˆ Š›‹Ž‚€  *
+C  ‚›•Ž„:  UK(3)  - Œ€‘‘ˆ‚ “ƒ‹Ž‚ Š›‹Ž‚€ (ƒ€„)             *
+C          P      - €€Œ…’ …Ž„Ž‡€—Ž‘’…‰               *
+C************************************************************
+      REAL*4 UK(3),R(4)
+      PI=4.0*ATAN(1.0)
+      SING=-(2.0*R(3)*R(4)-2.0*R(1)*R(2))
+      IF(ABS(SING).GT.1.0) SING=SING/ABS(SING)
+      COSG=P*SQRT(1.0-SING**2)
+      IF(ABS(COSG).GT.0.00001) GOTO 10
+      UK(2)=180.0*ATAN2(-(2.0*R(3)*R(4)-2.0*R(1)*R(2)),0.0)/PI
+      UK(1)=180.0*ATAN2((2.0*R(2)*R(3)-2.0*R(1)*R(4)),
+     *        (2.0*R(1)**2+2.0*R(2)**2-1.0))/PI*UK(2)/ABS(UK(2))
+      UK(3)=0.0
+      GOTO 20
+10    UK(2)=180.0*ATAN2(SING,COSG)/PI
+      UK(3)=180.0*ATAN2((2.0*R(2)*R(3)+2.0*R(1)*R(4))/COSG,
+     *     (2.0*R(1)**2+2.0*R(3)**2-1.0)/COSG)/PI
+      UK(1)=180.0*ATAN2((2.0*R(2)*R(4)+2.0*R(1)*R(3))/COSG,
+     *     (2.0*R(1)**2+2.0*R(4)**2-1.0)/COSG)/PI
+20    RETURN
+      END
+      SUBROUTINE PVM(L,M,N)
+C********************************************************
+C      / „‹Ÿ “ŒŽ†…ˆŸ Š‚€’…ˆŽŽ‚ N=L*M             *
+C       /‘‹Ž†…ˆ… €‡‚ŽŽ’Ž‚/                           *
+C-------------------------------------------------------*
+C       ‚•Ž„    L       1-‰ €‡‚ŽŽ’                    *
+C               M       2-‰ €‡‚ŽŽ’                    *
+C       ‚›•Ž„   N       …‡“‹œ’€’                       *
+C********************************************************
+      REAL*4 L(4),M(4),N(4)
+      N(1)=L(1)*M(1)-L(2)*M(2)-L(3)*M(3)-L(4)*M(4)
+      N(2)=L(1)*M(2)+L(2)*M(1)+L(3)*M(4)-L(4)*M(3)
+      N(3)=L(1)*M(3)+L(3)*M(1)+L(4)*M(2)-L(2)*M(4)
+      N(4)=L(1)*M(4)+L(4)*M(1)+L(2)*M(3)-L(3)*M(2)
+      RETURN
+      END
+      REAL FUNCTION PERIOD(AB,IORB)
+C**************************************************************
+C       ”“Š–ˆŸ „‹Ÿ €‘—…’€ …ˆŽ„€ Ž€™…ˆ Ž_…Š’€ Ž       *
+C       Žˆ’… ‚ Œˆ“’€•                                      *
+C-------------------------------------------------------------*
+C    ‚•Ž„:      AB      Ž‹œ˜€Ÿ Ž‹“Ž‘œ Žˆ’›  /Œ/           *
+C               IORB    €Š‹Ž…ˆ… Žˆ’›       /ƒ€„/        *
+C    ‚›•Ž„:     PERIOD  …ˆŽ„                  /Œˆ/         *
+C**************************************************************
+      REAL*4 IORB,K,MQ,J2
+      RE=6378140.0
+      K =0.743675E-1
+      PI=3.141592653
+      J2=-1082.637E-6
+      MQ=3.986012E14
+      PI180=PI/180.0
+      DTP=3.0*PI*(RE**2)*J2*(3.0-2.5
+     *   *(SIN(IORB*PI180))**2)/SQRT(MQ*AB)
+      PERIOD=2.0*PI*SQRT((AB/RE)**3)/K+DTP/60.0
+      RETURN
+      END
+      REAL FUNCTION DMVSEK(I)
+C**********************************************************
+C       ”“Š–ˆŸ „‹Ÿ €‘—…’€ —ˆ‘‹€ ‘…Š“„ Ž’ €—€‹€        *
+C       ’…Š“™ˆ• ‘“’ŽŠ                                     *
+C---------------------------------------------------------*
+C       I(3)    –…‹Ž—ˆ‘‹…›‰ Œ€‘‘ˆ‚ <——.ŒŒ.‘‘>           *
+C**********************************************************
+      INTEGER I(3)
+      DMVSEK=I(1)*3600.0+I(2)*60.0+I(3)*1.0
+      RETURN
+      END
+      REAL FUNCTION RNORMA(R)
+C****************************************************************
+C       ”“Š–ˆŸ „‹Ÿ ‚›—ˆ‘‹…ˆŸ ŽŒ› Š‚€’…ˆŽ€                *
+C---------------------------------------------------------------*
+C       ‚•Ž„    R       Š‚€’…ˆŽ                              *
+C       ‚›•Ž„           ŽŒ€                                   *
+C****************************************************************
+      REAL*4 R(4)
+      RNORMA=SQRT(R(1)**2+R(2)**2+R(3)**2+R(4)**2)
+      RETURN
+      END
+      SUBROUTINE ORBITA(ORB,A)
+C****************************************************************
+C       ‚•Ž„    ORB(1)  Ž‹œ˜€Ÿ /Ž‘œ Žˆ’›      /Œ   /        *
+C               ORB(2)  …Š‘–…’ˆ‘ˆ’…’                          *
+C               ORB(3)  €Š‹Ž…ˆ… Žˆ’›         /€„/         *
+C               ORB(4)  „Ž‹ƒŽ’€ ‚Ž‘•. “‡‹€        /€„/         *
+C               ORB(5)  €ƒ“Œ…’ ˜ˆŽ’› …ˆƒ…Ÿ   /€„/         *
+C               ORB(6)  …Š‘–…’ˆ—…‘Š€Ÿ €ŽŒ€‹ˆŸ  /€„/         *
+C       ‚›•Ž„   A       Š‚€’…ˆŽ ˆ‘Š...Ž‘Š                    *
+C****************************************************************
+      REAL*4  ORB(6),A(4),X1(4),X2(4),X3(4),XN(4)
+      PI=3.141592653
+      SINV=SIN(ORB(6))*SQRT(1.0-ORB(2)**2)/(1.0-ORB(2)*COS(ORB(6)))
+      COSV=(COS(ORB(6))-ORB(2))/(1.0-ORB(2)*COS(ORB(6)))
+      U=ORB(5)+ATAN2(SINV,COSV)
+      ARG1=(PI/2.0-ORB(4))/2.0
+      ARG2=(PI-ORB(3))/2.0
+      ARG3=U/2.0
+      X1(1)= COS(ARG1)
+      X1(4)=-SIN(ARG1)
+      X2(1)= COS(ARG2)
+      X2(3)=-SIN(ARG2)
+      X3(1)= COS(ARG3)
+      X3(4)=-SIN(ARG3)
+      CALL PVM(X1,X2,XN)
+      CALL PVM(XN,X3,A)
+      RETURN
+      END
+      SUBROUTINE GRAVMT(I,G,ABP,IORB,M)
+C*****************************************************
+C ƒ€‚’€–ˆŽ›‰ ŒŽŒ…’, „…‰‘’‚“ž™ˆ‰ € Žˆ’€‹œ›‰   *
+C             Žš…Š’ ‘‹Ž†Ž‰ ”ŽŒ›.                  *
+C----------------------------------------------------*
+C       ‚•Ž„:                                        *
+C   I-’…‡Ž ˆ…–ˆˆ                                *
+C   G-Š‚€’…ˆŽ ……•Ž„€ Ž‘Š-‘‘Š                    *
+C   ABP-Ž‹œ˜€Ÿ Ž‹“Ž‘œ Žˆ’› /M/                   *
+C   IORB-€Š‹Ž…ˆ… Žˆ’› /ƒ€„/                    *
+C      ‚›•Ž„:                                        *
+C   Œ-‚…Š’Ž ƒ€‚ˆ’€–ˆŽŽƒŽ ŒŽŒ…’€ ‚ ‘‘Š           *
+C*****************************************************
+      REAL*4 I(3,3),G(4),M(3),A(3),IA(3),IORB
+      PI=3.141592653
+      W0=2*PI/PERIOD(ABP,IORB)/60.0
+      W02=W0**2
+      A(1)=2.0*G(2)*G(3)+2.0*G(1)*G(4)
+      A(2)=G(1)**2-G(2)**2+G(3)**2-G(4)**2
+      A(3)=2.0*G(3)*G(4)-2.0*G(1)*G(2)
+      IA(1)= I(1,1)*A(1)-I(1,2)*A(2)-I(1,3)*A(3)
+      IA(2)=-I(2,1)*A(1)+I(2,2)*A(2)-I(2,3)*A(3)
+      IA(3)=-I(3,1)*A(1)-I(3,2)*A(2)+I(3,3)*A(3)
+      M(1)=3.0*W02*(A(2)*IA(3)-A(3)*IA(2))
+      M(2)=3.0*W02*(A(3)*IA(1)-A(1)*IA(3))
+      M(3)=3.0*W02*(A(1)*IA(2)-A(2)*IA(1))
+      RETURN
+      END
+      SUBROUTINE INER(VKG,FIG,VKI)
+C********************************************************************
+C  …Ž€‡Ž‚€ˆ… ƒˆ‚ˆ—‘Šˆ• ŠŽŽ„ˆ€’ ‚ ˆ…–ˆ€‹œ›…              *
+C-------------------------------------------------------------------*
+C  € ‚•Ž„…  : VKG(6) -ƒˆ‚ˆ—‘Šˆ… ŠŽŽ„ˆ€’› (X,Y,Z,X',Y',Z')      *
+C              FIG    -“ƒŽ‹ Œ…†„“ ‘ˆ‘’…Œ€Œˆ ŠŽŽ„ˆ€’ (‚ €„ˆ€€•)  *
+C  € ‚›•Ž„… : VKI(6) -ˆ…–ˆ€‹œ›… ŠŽŽ„ˆ€’› (X,Y,Z,X',Y',Z')     *
+C    ‚‘… ‚…‹ˆ—ˆ› Ž„ˆ€Ž‰ ’Ž—Ž‘’ˆ                                *
+C********************************************************************
+      REAL*4 VKG(6),VKI(6),FIG
+      WZ=7.292116E-5
+      VKI(1)=VKG(1)*COS(FIG)-VKG(2)*SIN(FIG)
+      VKI(2)=VKG(1)*SIN(FIG)+VKG(2)*COS(FIG)
+      VKI(3)=VKG(3)
+      VKI(4)=(VKG(4)*COS(FIG)-VKG(5)*SIN(FIG))-WZ*VKI(2)
+      VKI(5)=(VKG(4)*SIN(FIG)+VKG(5)*COS(FIG))+WZ*VKI(1)
+      VKI(6)=VKG(6)
+      RETURN
+      END
+      SUBROUTINE GRIN(VKI,FIG,VKG)
+C********************************************************************
+C  …Ž€‡Ž‚€ˆ… ˆ…–ˆ€‹œ›• ŠŽŽ„ˆ€’ ƒˆ‚ˆ—‘Šˆ…                *
+C-------------------------------------------------------------------*
+C  € ‚•Ž„…  : VKI(6) -ˆ…–ˆ€‹œ›… ŠŽŽ„ˆ€’› (X,Y,Z,X',Y',Z')     *
+C              FIG    -“ƒŽ‹ Œ…†„“ ‘ˆ‘’…Œ€Œˆ ŠŽŽ„ˆ€’ (‚ €„ˆ€€•)  *
+C  € ‚›•Ž„… : VKG(6) -ƒˆ‚ˆ—‘Šˆ… ŠŽŽ„ˆ€’› (X,Y,Z,X',Y',Z')      *
+C    ‚‘… ‚…‹ˆ—ˆ› Ž„ˆ€Ž‰ ’Ž—Ž‘’ˆ                                *
+C********************************************************************
+      REAL*4 VKG(6),VKI(6),FIG
+      WZ=7.292116E-5
+      VKG(1)=VKI(1)*COS(FIG)+VKI(2)*SIN(FIG)
+      VKG(2)=VKI(2)*COS(FIG)-VKI(1)*SIN(FIG)
+      VKG(3)=VKI(3)
+      VKG(4)=VKI(4)*COS(FIG)+VKI(5)*SIN(FIG)+WZ*VKG(2)
+      VKG(5)=VKI(5)*COS(FIG)-VKI(4)*SIN(FIG)-WZ*VKG(1)
+      VKG(6)=VKI(6)
+      RETURN
+      END
+      SUBROUTINE SOLNCE(JD,S)
+C*******************************************************
+C          €‘‘—…’ ŠŽŽ„ˆ€’ ‚…Š’Ž€,                  *
+C   “Š€‡›‚€ž™…ƒŽ €€‚‹…ˆ… € ‘Ž‹–… „‹Ÿ ‘…„…ƒŽ    *
+C   €‚Ž„…‘’‚ˆŸ „€’› ‚ Š‚€’Žˆ€‹œŽ‰ ‘ˆ‘’…Œ…        *
+C                  ŠŽŽ„ˆ€’.                          *
+C------------------------------------------------------*
+C           ‚•Ž„:                                      *
+C     JD - ž‹ˆ€‘Š€Ÿ „€’€( „‚Ž‰€Ÿ ’Ž—Ž‘’œ )          *
+C           ‚›•Ž„:                                     *
+C     S(3)-Œ€‘‘ˆ‚ ŠŽŽ„ˆ€’ ‚…Š’Ž€ ‘Ž‹–€             *
+C*******************************************************
+      DOUBLE PRECISION JD,T,E,M,PI,EP,V,L,C
+      REAL*4 S(3)
+      PI=4.0D0*DATAN(1.0D0)
+      T=(JD-2415020.0D0)/36525.0D0
+      E=0.01675104D0-0.0000418D0*T-0.000000126D0*T**2
+      M=PI*(358.47583D0+35999.04975D0*T
+     1 -0.000150D0*T**2-0.0000033D0*T**3)/180.0D0
+      L=PI*(279.69668D0+36000.76892D0*T
+     1  +0.0003025D0*T**2)/180.0D0
+      C=(2*E-0.25D0*E**3)*DSIN(M)+(1.25D0*E**2)*DSIN(2*M)
+     1 +(13.0D0*E**3/12.0D0)*DSIN(3*M)
+      V=L+C
+      EP=PI*(23.452294D0-0.0130125D0*T-0.00000164D0*T**2
+     1  +0.000000503D0*T**3)/180.0D0
+      S(1)=SNGL(DCOS(V))
+      S(2)=SNGL(DSIN(V)*DCOS(EP))
+      S(3)=SNGL(DSIN(V)*DSIN(EP))
+      RETURN
+      END
+      SUBROUTINE DATAJD(G,M,D,CH,MN,S,JD)
+C****************************************************
+C      ‚•Ž„:                                        *
+C     G-ƒŽ„        Ž„Žƒ€ŒŒ€ €Ž’€…’ Š€Š „‹Ÿ    *
+C     Œ-Œ…‘Ÿ–      Ž‹Ž†ˆ’…‹œ›•,’€Š ˆ „‹Ÿ Ž’ˆ–€-  *
+C     D-„…œ       ’…‹œ›• ‡€—…ˆ‰ ƒŽ„€ ˆ ‚›—ˆ‘‹Ÿ…’*
+C     CH-—€‘›      ŠŽ‹ˆ—…‘’‚Ž „…‰,Ž˜…„˜ˆ• ‘Ž „Ÿ *
+C     MN-Œˆ“’›    ‘Ž’‚Ž…ˆŸ Œˆ€ ‚‘…‚›˜ˆŒ ƒŽ‘Ž  *
+C     S-‘…Š“„›    „ŽŒ €˜ˆŒ (‘Œ."‚…’•ˆ‰ ‡€‚…’" ‘.5)*
+C      ‚›•Ž„:                                       *
+C     JD- ž‹ˆ€‘Š€Ÿ „€’€                            *
+C****************************************************
+      INTEGER*2 ID(3),G,M,D,CH,MN,S,G1,M1,A,B,N,K
+      REAL*4 S1,DT
+      DOUBLE PRECISION JD,D1
+      ID(1)=CH
+      ID(2)=MN
+      ID(3)=S
+      S1=DMVSEK(ID)
+      D1=S1/0.86400D+05+D
+      N=1
+      K=0
+      DT=G*1.0+M*0.01+D*0.0001
+       IF(DT.LT.1582.1015) N=0
+       IF(G.LT.0) K=1
+      G1=G-1
+      M1=M+12
+       IF(M.LE.2) GOTO 10
+      G1=G
+      M1=M
+10    A=INT(G1*1.0/100.0)
+      B=2-A+INT(A*1.0/4.0)
+      JD=0.36500D+03*G1+INT(0.25*G1-K*0.75)
+     1   +INT(30.6001*(M1+1))
+     2   +D1+0.17209945D+07+N*B
+      RETURN
+      END
+      SUBROUTINE JDDATA(JD,G,M,D,CH,MN,S)
+C*******************************************************
+C     …Ž€‡“…’ ž‹ˆ€‘Š“ž „€’“ ‚ Š€‹…„€“ž         *
+C------------------------------------------------------*
+C       ‚•Ž„:                                          *
+C     JD - ž‹ˆ€‘Š€Ÿ „€’€                              *
+C       ‚›•Ž„:                                         *
+C     G  - ƒŽ„      Žƒ€ŒŒ€ ˆŒ…ˆŒ€ Š€Š            *
+C     Œ  - Œ…‘Ÿ–    „‹Ÿ Ž‹Ž†ˆ’…‹œ›•,’€Š ˆ            *
+C     D  - „…œ     Ž’ˆ–€’…‹œ›• ŽŒ…Ž‚ ƒŽ„€,        *
+C     CH - —€‘›     Ž ’Ž‹œŠŽ „‹Ÿ Ž‹Ž†ˆ’…‹œ›•        *
+C     MN - Œˆ“’›   ŽŒ…Ž‚ ž‹ˆ€‘ŠŽ‰ „€’› JD.         *
+C     S  - ‘…Š“„›                                     *
+C*******************************************************
+      INTEGER*2 IT(3),G,M,D,CH,MN,S,C,E,IS
+      DOUBLE PRECISION JD,JD1,A,B,DD,F,Z,DP,DR
+      JD1=JD+5.0D-01
+      DD=1.0D4*IDINT(JD1/1.0D4)
+      Z=DD+IDINT(JD1-DD)
+      F=JD1-Z
+      E=IDINT((Z-1867216.25D0)/36524.25D0)
+      A=Z+1.0D0+E-E/4
+       IF(Z.GE.2299161.0D0) GOTO 10
+      A=Z
+10    B=A+1524.0D0
+      C=IDINT((B-122.1D0)/365.25D0)
+      DP=365.25D0*C
+      DR=1.0D4*IDINT(DP/1.0D4)
+      DD=DR+IDINT(DP-DR)
+      E=IDINT((B-DD)/30.6001D0)
+      DR=B-DD-IDINT(30.6001D0*E)+F
+      D=IDINT(DR)
+      CALL TIM2(SNGL(DR-D)*86400.0,IT,IS)
+      CH=IT(1)
+      MN=IT(2)
+      S= IT(3)
+      M=E-13
+       IF(E.LT.13.5) M=E-1
+      G=C-4716
+       IF(M.LT.2.5) G=C-4715
+      RETURN
+      END
+      SUBROUTINE MATOBR(A,B)
+C**********************************************************
+C                  Ž€™…ˆ… Œ€’ˆ–›                       *
+C     ‚•Ž„:  €- …‘ˆƒ“‹Ÿ€Ÿ Œ€’ˆ–€ 3 € 3              *
+C     ‚›•Ž„: ‚- Ž€’€Ÿ Œ€’ˆ–€                          *
+C**********************************************************
+      REAL*4 A(3,3),B(3,3)
+      DET=A(1,1)*A(2,2)*A(3,3)+A(1,2)*A(2,3)*A(3,1)
+     1   +A(1,3)*A(2,1)*A(3,2)-A(3,1)*A(2,2)*A(1,3)
+     2   -A(3,2)*A(2,3)*A(1,1)-A(3,3)*A(2,1)*A(1,2)
+      B(1,1)=(A(2,2)*A(3,3)-A(3,2)*A(2,3))/DET
+      B(1,2)=(A(3,2)*A(1,3)-A(1,2)*A(3,3))/DET
+      B(1,3)=(A(1,2)*A(2,3)-A(2,2)*A(1,3))/DET
+      B(2,1)=(A(3,1)*A(2,3)-A(2,1)*A(3,3))/DET
+      B(2,2)=(A(1,1)*A(3,3)-A(3,1)*A(1,3))/DET
+      B(2,3)=(A(2,1)*A(1,3)-A(1,1)*A(2,3))/DET
+      B(3,1)=(A(2,1)*A(3,2)-A(3,1)*A(2,2))/DET
+      B(3,2)=(A(3,1)*A(1,2)-A(1,1)*A(3,2))/DET
+      B(3,3)=(A(1,1)*A(2,2)-A(2,1)*A(1,2))/DET
+      END
+      SUBROUTINE PERVEK(KV,VS,VN)
+C**********************************************************
+C ……Ž‘ ‚…Š’Ž€ ˆ‡ Ž„Ž‰ ŸŒŽ“ƒŽ‹œŽ‰ ‘ˆ‘’…Œ› ŠŽŽ„ˆ€’*
+C ‚ „“ƒ“ž, ˆŒ…ž™ˆ• Ž™ˆ‰ –…’ ˆ Ž‚…“’›… € Žˆ‡‚Ž‹œ-*
+C                   ›… “ƒ‹›.                             *
+C---------------------------------------------------------*
+C     ‚•Ž„:                                               *
+C KV- Š‚€’…ˆŽ ……•Ž„€ ˆ‡ €—€‹œŽ‰ ‘.Š. ‚ ŠŽ…—“ž ‘.Š*.
+C VS- ŠŽŽ„ˆ€’› ‚…Š’Ž€ ‚ €—€‹œŽ‰ ‘.Š.                 *
+C     ‚›•Ž„:                                              *
+C VN- ŠŽŽ„ˆ€’› ‚…Š’Ž€ ‚ ŠŽ…—Ž‰ ‘.Š.                  *
+C**********************************************************
+      REAL*4 KV(4),VS(3),VN(3),X(4),Y(4)
+      X(1)=0.
+      X(2)=VS(1)
+      X(3)=VS(2)
+      X(4)=VS(3)
+      KV(2)=-KV(2)
+      KV(3)=-KV(3)
+      KV(4)=-KV(4)
+      CALL PVM(KV,X,Y)
+      KV(2)=-KV(2)
+      KV(3)=-KV(3)
+      KV(4)=-KV(4)
+      CALL PVM(Y,KV,X)
+      VN(1)=X(2)
+      VN(2)=X(3)
+      VN(3)=X(4)
+      RETURN
+      END
+      SUBROUTINE TIM2(TS,ITM,IS)
+C************************************************************
+C      / „‹Ÿ ……‘—…’€ ‘…Š“„ ‚ –…‹›… —ˆ‘‹€ —€‘,Œˆ,‘…Š   *
+C===========================================================*
+C              ‚•Ž„:                                        *
+C      TS......—ˆ‘‹Ž ‘…Š“„                                 *
+C              ‚›•Ž„:                                       *
+C      ITM.....–…‹—ˆ‘‹…›‰ Œ€‘‘ˆ‚ —€‘Ž‚,Œˆ“’,‘…Š“„       *
+C      IS......ŠŽ‹-‚Ž –…‹›• ‘“’ŽŠ                           *
+C************************************************************
+      INTEGER ITM(3),IS
+      REAL*4 TS
+      IS=INT(TS/86400.0)
+      IF(TS.LT.0) IS=INT(TS/86400.0)-1
+      TS=TS-IS*86400.0
+      ITM(1)=INT(TS/3600.0)
+      TMS=TS-FLOAT(ITM(1))*3600.0
+      ITM(2)=INT(TMS/60.0)
+      TSS=TMS-FLOAT(ITM(2))*60.0
+      ITM(3)=INT(TSS)
+      RETURN
+      END
+      SUBROUTINE OSQL(VK,ORB,EE)
+C*********************************************************
+C       / „‹Ÿ €‘—…’€ ‚…Š’Ž€ Ž‘Š“‹ˆ“ž™ˆ• ‹…Œ…’Ž‚   *
+C       Žˆ’› ……‘ŽƒŽ ’…‹€ Ž ˆ‡‚…‘’ŽŒ“ ‚…Š’Ž“      *
+C       ‘Ž‘’ŽŸˆŸ ‚ ˆ…–ˆ€‹œŽ‰ Š‚€’Žˆ€‹œŽ‰ ‘ˆ‘’…Œ…  *
+C       ŠŽŽ„ˆ€’                                        *
+C--------------------------------------------------------*
+C          ‚•Ž„:                                         *
+C       VK      ‚…Š’Ž ‘Ž‘’ŽŸˆŸ Ž_…Š’€                 *
+C          ‚›•Ž„:                                        *
+C       ORB     ‚…Š’Ž Ž‘Š“‹ˆ“ž™ˆ• ‹…Œ…’Ž‚ Žˆ’›     *
+C       ……      Š‘–…’ˆ—…‘Š€Ÿ €ŽŒ€‹ˆŸ                 *
+C--------------------------------------------------------*
+C       A       QSK(1) Ž‹œ˜€Ÿ Ž‹“Ž‘œ(Œ)                *
+C       E       QSK(2) Š‘–…’ˆ‘ˆ’…’                    *
+C       I       QSK(3) €Š‹Ž…ˆ… (€„)                  *
+C       OMEGA   QSK(4) „Ž‹ƒŽ’€ ‚Ž‘•Ž„Ÿ™…ƒŽ “‡‹€ (€„)    *
+C       W       QSK(5) €ƒ“Œ…’ …ˆ–…’€ (€„)         *
+C       M       QSK(6) ‘…„ŸŸ €ŽŒ€‹ˆŸ (€„)            *
+C       MQ      Œž - Žˆ‡‚. ƒ€‚.Ž‘’. € Œ€‘‘“ ‡…Œ‹ˆ   *
+C*********************************************************
+      DIMENSION VK(6),ORB(6)
+      REAL I,M,MQ
+      MQ=0.3986013E15
+      PI=4.0*ATAN(1.0)
+      C1=VK(2)*VK(6)-VK(3)*VK(5)
+      C2=VK(3)*VK(4)-VK(1)*VK(6)
+      C3=VK(1)*VK(5)-VK(2)*VK(4)
+      C=SQRT(C1*C1+C2*C2+C3*C3)
+      OMEGA=ATAN2(C1,-C2)
+      I=ATAN(SQRT(1.-(C3/C)*(C3/C))/(C3/C))
+      V=SQRT(VK(4)*VK(4)+VK(5)*VK(5)+VK(6)*VK(6))
+      R=SQRT(VK(1)*VK(1)+VK(2)*VK(2)+VK(3)*VK(3))
+      SINTET=(VK(1)*VK(4)+VK(2)*VK(5)+VK(3)*VK(6))/(R*V)
+      COSTET=SQRT(R*R*V*V-(VK(1)*VK(4)+VK(2)*VK(5)+VK(3)*VK(6))
+     *      *(VK(1)*VK(4)+VK(2)*VK(5)+VK(3)*VK(6)))/(R*V)
+      RK=R*V*V/MQ
+      A=R/(2.0-RK)
+      E=SQRT(1.0-RK*(2.0-RK)*COSTET*COSTET) + 1.0E-6
+      SINV=RK*SINTET*COSTET/E
+      COSV=(RK*COSTET*COSTET-1.0)/E
+      COSU=(VK(1)*COS(OMEGA)+VK(2)*SIN(OMEGA))/R
+      SINU=VK(3)/(R*SIN(I))
+      U=ATAN2(SINU,COSU)
+      V=ATAN2(SINV,COSV)
+      W=U-V
+      SINE=SQRT(1.0-E*E)*SINV/(1.0+E*COSV)
+      COSE=(E+COSV)/(1.0+E*COSV)
+      EE=ATAN2(SINE,COSE)
+      M=EE-E*SINE
+      ORB(1)=A
+      ORB(2)=E
+      ORB(3)=I
+      ORB(4)=OMEGA
+      ORB(5)=W
+      ORB(6)=M
+      RETURN
+      END
+      SUBROUTINE VEKTOR(ORB,VK)
+C***********************************************************
+C  …Ž€‡Ž‚€ˆ… Žˆ’€‹œ›• ‹…Œ…’Ž‚ ‚ ‚…Š’Ž ‘Ž‘’ŽŸˆŸ *
+C----------------------------------------------------------*
+C         ‚•Ž„:                                            *
+C  ŽRB(1) - ..Ž‘œ (Œ)       ORB(4) - „Ž‹ƒŽ’€ ‚.“.(€„)   *
+C  ORB(2) - Š‘–…’ˆ‘ˆ’…’    ORB(5) - €ƒ“Œ…’ ˜..(€„)  *
+C  ŽRB(3) - €Š‹Ž…ˆ… (€„)  ORB(6) - Š‘–…’.€ŽŒ.(€„) *
+C         ‚›•Ž„:                                           *
+C  VK(1),VK(2),VK(3) - ŠŽŽ„ˆ€’› (Œ) ‚ Š‚€’Žˆ€‹œŽ‰     *
+C  VK(4),VK(5),VK(6) - ‘ŠŽŽ‘’ˆ (Œ/‘)       ‘Š.            *
+C***********************************************************
+      REAL*4 ORB(6),VK(6),I,MU
+      MU=3986012.E+8
+      A=ORB(1)
+      EC=ORB(2)
+      I=ORB(3)
+      OM=ORB(4)
+      W=ORB(5)
+      EE=ORB(6)
+      SINV=SIN(EE)*SQRT(1.0-EC**2)/(1.0-EC*COS(EE))
+      COSV=(COS(EE)-EC)/(1.0-EC*COS(EE))
+      V=ATAN2(SINV,COSV)
+      U=W+V
+      P=A*(1.0-EC**2)
+      R=P/(1.0+EC*COSV)
+      VR=EC*SINV*SQRT(MU/P)
+      VU=(1.0+EC*COSV)*SQRT(MU/P)
+      VK(1)=R*(COS(OM)*COS(U)-SIN(OM)*SIN(U)*COS(I))
+      VK(2)=R*(SIN(OM)*COS(U)+COS(OM)*SIN(U)*COS(I))
+      VK(3)=R*SIN(U)*SIN(I)
+      VK(4)=VR*(COS(OM)*COS(U)-SIN(OM)*SIN(U)*COS(I))
+     *     -VU*(COS(OM)*SIN(U)+SIN(OM)*COS(U)*COS(I))
+      VK(5)=VR*(SIN(OM)*COS(U)+COS(OM)*SIN(U)*COS(I))
+     *     -VU*(SIN(OM)*SIN(U)-COS(OM)*COS(U)*COS(I))
+      VK(6)=VR*SIN(U)*SIN(I)+VU*COS(U)*SIN(I)
+      RETURN
+      END
+      SUBROUTINE STAR(JD0,JD,S0,S)
+C************************************************************
+C           '' ‡‚…‡„Ž… ‚…ŒŸ ''                            *
+C ‚›—ˆ‘‹…ˆ… “ƒ‹€ Ž‚ŽŽ’€ ƒˆ‚ˆ—…‘ŠŽ‰ ‘.Š. Ž’Ž‘ˆ’…‹œŽ   *
+C ˆ…–ˆ€‹œŽ‰ € ŒŽŒ…’ €—€‹€ „€’› ˆ € ’…Š“™ˆ‰ ŒŽŒ…’    *
+C                        „€’›                               *
+C-----------------------------------------------------------*
+C       ‚•Ž„:                                               *
+C JD0- ž‹ˆ€‘Š€Ÿ „€’€ € 0 —€‘Ž‚.                           *
+C JD - ’…Š“™€Ÿ ž‹ˆ€‘Š€Ÿ „€’€                               *
+C       ‚›•Ž„:                                              *
+C S0 - ‡‚…‡„Ž… ‚…ŒŸ € €—€‹Ž „€’› (€„)                  *
+C S  - ’…Š“™…… ‡‚…‡„Ž… ‚…ŒŸ (€„)                         *
+C************************************************************
+      DOUBLE PRECISION PI,JD,JD0,T,S0,S
+      PI=4.0D0*DATAN(1.0D0)
+      T=(JD0-2415020.0D0)/36525.0D0
+      S0=PI*15.0D0*(6.6460656D0+2400.051262D0*T
+     1  +0.00002581D0*T**2)/180.0D0
+      S0=DATAN2(DSIN(S0),DCOS(S0))
+      IF(S0.LT.0) S0=S0+2*PI
+      S=PI*(JD-JD0)*360.0D0*1.002737908D0/180.0D0
+      S=S+S0
+      S=DATAN2(DSIN(S),DCOS(S))
+      IF(S.LT.0) S=S+2*PI
+      RETURN
+      END
+      SUBROUTINE TRAS(X,Y,Z,ZU,A,E,EAN,B,L,H)
+***********************************************************************
+*   ‚•Ž„:   X,Y,Z - €„ˆ“‘-‚…Š’Ž (Œ)
+*           ZU  - ‡‚…‡„Ž… ‚…ŒŸ (€„)
+*           A   - .Ž‹“Ž‘œ (Œ)
+*           E   - Š‘–…’ˆ‘ˆ’…’
+*           EAN - …Š‘–.€ŽŒ€‹ˆŸ (€„)
+*   ‚›•Ž„:  ‚ - ƒ…Žƒ€”ˆ—…‘Š€Ÿ ˜ˆŽ’€  (ƒ€„)
+*           L - ƒ…Žƒ€”ˆ—…‘Š€Ÿ „Ž‹ƒŽ’€ (ƒ€„ 0-360)
+*           H - ‚›‘Ž’€ (ŠŒ)
+***********************************************************************
+      REAL*4 X,Y,Z,RM,RG,A,E,EAN,B,L,H,G1,G2,RZ,F,PI,ZU
+      PARAMETER(RZ=0.6378166E+07)
+      PARAMETER(F =0.3352810E-02)
+      PARAMETER(PI=3.14159265359)
+      RAD=SQRT(X*X+Y*Y+Z*Z)
+      SNB=Z/RAD
+      CSB=SQRT(1-SNB*SNB)
+      B=ASIN(SNB)
+      L=ATAN2(Y,X)-ZU
+      G1=1.0/SQRT(1.0-(2.0*F-F**2)*SNB**2)
+      G2=(1.0-F)**2/SQRT(1.0-(2.0*F-F**2)*SNB**2)
+      RG=G1*(CSB**2)+G2*(SIN(B)**2)
+      RM=A*(1.0-E*COS(EAN))/RZ
+      H=(RM-RG)*RZ/1000.0
+      B=180.0*B/PI
+      L=180.0*L/PI
+      IF(L.LT.0) L=L+360.0
+      IF(L.LT.0) L=L+360.0
+      RETURN
+      END
+      SUBROUTINE KEPL(M,EC,E,I,K)
+C******************************************************
+C  ˆ’…€–ˆŽŽ… …˜…ˆ… ’€‘–…„…’ŽƒŽ “€‚…ˆŸ   *
+C  Š…‹…€, Žˆ‘›‚€ž™…ƒŽ „‚ˆ†…ˆ… Ž ‹‹ˆ‘“.         *
+C-----------------------------------------------------*
+C          ‚•Ž„:                                      *
+C     Œ- ‘…„ŸŸ €ŽŒ€‹ˆŸ ( €„ )                     *
+C     …‘-Š‘–…’ˆ‘ˆ’…’
+C     I- ’…“…Œ€Ÿ ’Ž—Ž‘’œ ‚›—ˆ‘‹…ˆŸ (Š-‚Ž ‡€ŠŽ‚   *
+C        Ž‘‹… ‡€Ÿ’Ž‰)                               *
+C-----------------------------------------------------*
+C          ‚›•Ž„:                                     *
+C     …- Š‘–…’ˆ—…‘Š€Ÿ €ŽŒ€‹ˆŸ                     *
+C     Š- Š-‚Ž ˆ’…€–ˆ‰, ‘„…‹€Ž… Žƒ€ŒŒŽ‰          *
+C******************************************************
+      REAL*4 M,E,EC,DI,E0,E1,DE
+      INTEGER*2 I,K
+      DI=0.1**I
+      K=0
+      E0=M
+1     DE=(M+EC*SIN(E0)-E0)/(1.0-EC*COS(E0))
+      E1=E0+DE
+      E0=E1
+      K=K+1
+      IF(K.EQ.10) GOTO 2
+      IF(ABS(DE).GE.DI) GOTO 1
+2     E=E1
+      RETURN
+      END
+      SUBROUTINE GRADUS(G,IG,IM,IS)
+C************************************************
+C ……‚Ž„ „…‘Ÿ’ˆ—›• ƒ€„“‘Ž‚ ‚ ƒ€„.,Œˆ.,‘…Š. *
+C-----------------------------------------------*
+C       ‚•Ž„:                                   *
+C  G -  „…‘Ÿ’ˆ—Ž… —ˆ‘‹‹Ž ƒ€„“‘Ž‚              *
+C       ‚›•Ž„:                                  *
+C  IG-  ŠŽ‹-‚Ž –…‹›• ƒ€„“‘Ž‚                   *
+C  IM-               Œˆ“’                      *
+C  IS                ‘…Š“„                     *
+C************************************************
+      REAL*4 G
+      INTEGER*2 IG,IM,IS
+      IG=INT(G)
+      IM=INT((G-IG)*60.0)
+      IS=INT((G-IG)*3600.0-60.0*IM)
+      RETURN
+      END
+      SUBROUTINE UNGRAD(IG,IM,IS,G)
+C************************************************
+C ……‚Ž„ ƒ€„.,Œˆ.,‘…Š. ‚ „…‘Ÿ’ˆ—›… ƒ€„“‘›  *
+C-----------------------------------------------*
+C       ‚•Ž„:                                   *
+C  IG-  ŠŽ‹-‚Ž –…‹›• ƒ€„“‘Ž‚                   *
+C  IM-               Œˆ“’                      *
+C  IS                ‘…Š“„                     *
+C       ‚›•Ž„:                                  *
+C  G -  „…‘Ÿ’ˆ—Ž… —ˆ‘‹Ž ƒ€„“‘Ž‚               *
+C************************************************
+      REAL*4 G
+      INTEGER*2 IG,IM,IS
+      G = FLOAT(ABS(IG)) + FLOAT(IM) / 60.0 + FLOAT(IS) /3600.0
+      G = SIGN( G,FLOAT(IG) )
+      RETURN
+      END
+      SUBROUTINE GELIOS(JD,R,S,V,E,EP)
+C*********************************************************
+C  ‚›—ˆ‘‹…ˆ… ŸŒŽ“ƒŽ‹œ›• ŠŽŽ„ˆ€’ ‘Ž‹–€ ˆ €€Œ…’Ž‚*
+C             Žˆ’› ‡…Œ‹ˆ „‚Ž‰Ž‰ ’Ž—Ž‘’ˆ              *
+C--------------------------------------------------------*
+C          ‚•Ž„:                                         *
+C   JD - ž‹ˆ€‘Š€Ÿ „€’€                                  *
+C--------------------------------------------------------*
+C          ‚›•Ž„:                                        *
+C   R  - ŒŽ„“‹œ €„ˆ“‘€-‚…Š’Ž€ ( €‘’. …„. )            *
+C   S  - ŠŽŽ„ˆ€’› ‚…Š’Ž€, “Š€‡›‚€ž™…ƒŽ €€‚‹…ˆ… € *
+C        ‘Ž‹–… ‚ Š‚€’Žˆ€‹œŽ‰ ‘ˆ‘’…Œ… ŠŽŽ„ˆ€’       *
+C        ( €€‚‹Ÿž™ˆ… ŠŽ‘ˆ“‘› ).                      *
+C   V  - „Ž‹ƒŽ’€ ‘Ž‹–€ ( ƒ€„. )                        *
+C   …  - Š‘–…’ˆ‘ˆ’…’ ‡…ŒŽ‰ Žˆ’›                    *
+C   …P - “ƒŽ‹ €Š‹Ž€ Š‹ˆ’ˆŠˆ Š ‹-’ˆ Š‚€’Ž€ ( €„.) *
+C*********************************************************
+      DOUBLE PRECISION JD,T,M,E,EE,PI,EP,V,R,
+     1                 A,B,C,D,ET,H,S(3)
+	  INTEGER*4 K
+      PI=4.0D0*DATAN(1.0D0)
+      T=(JD-2415020.0D0)/36525.0D0
+      M=PI*(358.47583D0+35999.04975D0*T
+     1  -0.000150D0*T**2-0.0000033D0*T**3)/180.0D0
+      E=0.01675104D0-0.0000418D0*T-0.000000126D0*T**2
+      A=PI*(153.23D0+22518.7541D0*T)/180.0D0
+      B=PI*(216.57D0+45037.5082D0*T)/180.0D0
+      C=PI*(312.69D0+32964.3577D0*T)/180.0D0
+      D=PI*(350.74D0+445267.1142D0*T-0.00144*T**2)/180.0D0
+      ET=PI*(231.19D0+20.20D0*T)/180.0D0
+      H=PI*(353.40D0+65928.7155D0*T)/180.0D0
+      V=PI*(279.69668D0+36000.76892D0*T
+     1  +0.0003025D0*T**2+(1.919460D0-0.004789D0*T
+     2  -0.000014D0*T**2)*DSIN(M)+(0.020094D0
+     3  -0.000100D0*T)*DSIN(2.0*M)+0.000293*DSIN(3.0*M)
+     4  +0.00134D0*DCOS(A)+0.00154D0*DCOS(B)+0.00200D0*DCOS(C)
+     5  +0.00179D0*DSIN(D)+0.00178D0*DSIN(ET))/180.0D0
+      V=DATAN2(DSIN(V),DCOS(V))
+      IF(V.LT.0) V=V+2.0D0*PI
+      CALL KEPLER(M,E,EE,15,K)
+      R=1.0000002D0*(1.0D0-E*DCOS(EE))+0.00000543D0*DSIN(A)
+     1  +0.00001575D0*DSIN(B)+0.00001627D0*DSIN(C)
+     2  +0.00003076D0*DCOS(D)+0.00000927D0*DSIN(H)
+      EP=PI*(23.452294D0-0.0130125D0*T-0.00000164D0*T**2
+     1  +0.000000503D0*T**3)/180.0D0
+      S(1)=R*DCOS(V)
+      S(2)=R*DSIN(V)*DCOS(EP)
+      S(3)=R*DSIN(V)*DSIN(EP)
+      V=180.0D0*V/PI
+      RETURN
+      END
+      SUBROUTINE KEPLER(M,EC,E,I,K)
+C**********************************************************
+C  …˜…ˆ… ’€‘–…„…’ŽƒŽ “€‚…ˆŸ Š…‹…€ „‹Ÿ „‚ˆ†…ˆŸ*
+C  Ž ‹‹ˆ‘“ Œ…’Ž„ŽŒ ˆ’…€–ˆ‰ „‚Ž‰Ž‰ ’Ž—Ž‘’ˆ           *
+C---------------------------------------------------------*
+C          ‚•Ž„:                                          *
+C     Œ- ‘…„ŸŸ €ŽŒ€‹ˆŸ(€„)                            *
+C     …‘-Š‘–…’ˆ‘ˆ’…’                                   *
+C     I- ’…“…Œ€Ÿ ’Ž—Ž‘’œ( ŠŽ‹-‚Ž ‡€ŠŽ‚ Ž‘‹… ‡’ )    *
+C          ‚›•Ž„:                                         *
+C     …- Š‘–…’ˆ—…‘Š€Ÿ €ŽŒ€‹ˆŸ                         *
+C     Š- ŠŽ‹-‚Ž Ž„…‹€›• ˆ’…€–ˆ‰ „‹Ÿ „Ž‘’. ‡€„. ’Ž—. *
+C**********************************************************
+      DOUBLE PRECISION M,E,EC,DI,E0,E1,DE
+      INTEGER*4 I,K
+      DI=0.1D0**I
+      K=0
+      E0=M
+1     DE=(M+EC*DSIN(E0)-E0)/(1.0D0-EC*DCOS(E0))
+      E1=E0+DE
+      E0=E1
+      K=K+1
+      IF(K.EQ.10) GOTO 2
+      IF(DABS(DE).GE.DI) GOTO 1
+2     E=E1
+      RETURN
+      END
+      SUBROUTINE REDUKT(JD0,JD,S0,S)
+C************************************************************
+C  ……‘—…’ ŸŒŽ“ƒŽ‹œ›• ŠŽŽ„ˆ€’ ˆ‘’Ž—ˆŠ€ ‘Ž ‘…„…ƒŽ   *
+C   €‚Ž„…‘’‚ˆŸ „€’› € ‘’€„€’Ž… €‚Ž„…‘’‚ˆ…         *
+C-----------------------------------------------------------*
+C       ‚•Ž„:                                               *
+C  JD0 - €—€‹œ€Ÿ ž‹ˆ€‘Š€Ÿ „€’€                           *
+C  JD  - ‘’€„€’€Ÿ ž‹ˆ€‘Š€Ÿ „€’€                         *
+C  S0  - ŸŒŽ“ƒŽ‹œ›… ŠŽŽ„ˆ€’› ˆ‘’Ž—ˆŠ€ ‚ Š‚€’Žˆ€‹œŽ‰*
+C        ‘ˆ‘’…Œ… ŠŽŽ„ˆ€’ € ‘…„…… €‚Ž„…‘’‚ˆ… „€’›    *
+C       ‚›•Ž„:                                              *
+C  S   - ŸŒŽ“ƒŽ‹œ›… ŠŽŽ„ˆ€’› ˆ‘’Ž—ˆŠ€ ‚ Š‚€’Žˆ€‹œŽ‰*
+C        ‘ˆ‘’…Œ… ŠŽŽ„ˆ€’ € ‘’€„€’Ž… €‚Ž„…‘’‚ˆ….    *
+C************************************************************
+      DOUBLE PRECISION S0(3),S(3),JD0,JD,T0,T,
+     1                 X1,X2,X3,XX,XY,XZ,YX,YY,YZ,
+     2                 ZX,ZY,ZZ,PI
+      PI=4.0D0*DATAN(1.0D0)
+      T0=(JD0-2415020.313D0)/36524.2199D0
+      T=(JD-JD0)/36524.2199D0
+      X1=PI*(((2304.250D0+1.396D0*T0)*T+0.302D0*T**2
+     1  +0.018D0*T**3)/3600.0D0)/180.0D0
+      X2=PI*((180.0D0*3600.0D0*X1/PI+0.791D0*T**2+0.001D0*T**3)
+     1  /3600.0D0)/180.0D0
+      X3=PI*(((2004.682D0-0.853D0*T0)*T-0.426D0*T**2
+     1  -0.042D0*T**3)/3600.0D0)/180.0D0
+      XX=DCOS(X1)*DCOS(X2)*DCOS(X3)-DSIN(X1)*DSIN(X2)
+      XY=DSIN(X1)*DCOS(X2)+DCOS(X1)*DSIN(X2)*DCOS(X3)
+      XZ=DCOS(X1)*DSIN(X3)
+      YX=-DCOS(X1)*DSIN(X2)-DSIN(X1)*DCOS(X2)*DCOS(X3)
+      YY=DCOS(X1)*DCOS(X2)-DSIN(X1)*DSIN(X2)*DCOS(X3)
+      YZ=-DSIN(X1)*DSIN(X3)
+      ZX=-DCOS(X2)*DSIN(X3)
+      ZY=-DSIN(X2)*DSIN(X3)
+      ZZ=DCOS(X3)
+      S(1)=XX*S0(1)+YX*S0(2)+ZX*S0(3)
+      S(2)=XY*S0(1)+YY*S0(2)+ZY*S0(3)
+      S(3)=XZ*S0(1)+YZ*S0(2)+ZZ*S0(3)
+      RETURN
+      END
+      SUBROUTINE MARS(JD,LAMB,BET,ALF,DEL,DZ,K,DS)
+C********************************************************
+C              ”…Œ…ˆ„› Œ€‘€                          *
+C              ˆ‘’ˆŽ… Ž‹Ž†…ˆ…                       *
+C-------------------------------------------------------*
+C        ‚•Ž„:                                          *
+C  JD - ž‹ˆ€‘Š€Ÿ „€’€                                  *
+C        ‚›•Ž„:                                         *
+C LAMB- „Ž‹ƒŽ’€ (  €„.)   ƒ…‹ˆŽ–…’ˆ—…‘Š€Ÿ            *
+C  BET- ˜ˆŽ’€  (  €„.)   ƒ…‹ˆŽ–…’ˆ—…‘Š€Ÿ            *
+C  ALF- ŸŒŽ… ‚Ž‘•Ž†„…ˆ… (  €„.)                     *
+C  DEL- ‘Š‹Ž…ˆ… (  €„.)                              *
+C  DZ - €‘‘’ŽŸˆ… „Ž ‡…Œ‹ˆ ( €‘’.…„.)                 *
+C  DS - ‚ˆ„ˆŒ›‰ “ƒ‹Ž‚Ž‰ €„ˆ“‘ (“ƒ‹.‘…Š.)               *
+C  K  - ”€‡€ ( Ž‘‚…™…€Ÿ —€‘’œ ‚ˆ„ŒŽƒŽ „ˆ‘Š€ )         *
+C********************************************************
+      DOUBLE PRECISION JD,PI,T,LS,A,EC,I,W,OM,M,M2,M4,M5,
+     1                 L,E,V,R,U,RS,S(3),VS,EZ,EP,
+     2                 B,LAMB,DZ,BET,ALF,DEL,SDEL,CDEL
+	  INTEGER*4 N
+      REAL*4 K,DS
+      PI=4.0D0*DATAN(1.0D0)
+      T=(JD-2415020.0D0)/36525.0D0
+      M= PI*(358.47583D0+35999.04975D0*T
+     1  -0.00015D0*T**2-0.0000033D0*T**3)/180.0D0
+      M2=PI*(212.60322D0+58517.80387D0*T+0.001286D0*T**2)/180.0D0
+      M4=PI*(319.51913D0+19139.85475D0*T+0.000181D0*T**2)/180.0D0
+      M5=PI*(225.32833D0+3034.69202D0*T-0.000722D0*T**2)/180.0D0
+      M4=M4-PI*(0.01133D0*DSIN(3*M5-8*M4+4*M)
+     1  -0.00933D0*DCOS(3*M5-8*M4+4*M))/180.0D0
+      LS=PI*(293.737334D0+19141.69551D0*T+0.0003107D0*T**2
+     1  -0.01133D0*DSIN(3*M5-8*M4+4*M)
+     2  -0.00933D0*DCOS(3*M5-8*M4+4*M))/180.0D0
+      A=1.5236883D0
+      EC=0.0933129D0+0.000092064D0*T-0.000000077D0*T**2
+      I=PI*(1.850333D0-0.0006750D0*T+0.0000126D0*T**2)/180.0D0
+      W=PI*(285.431761D0+1.0697667D0*T+0.0001313D0*T**2
+     1 +0.00000414D0*T**3)/180.0D0
+      OM=PI*(48.786442D0+0.7709917D0*T-0.0000014D0*T**2
+     1 -0.00000533D0*T**3)/180.0D0
+      CALL KEPLER(M4,EC,E,15,N)
+      V=2.0D0*DATAN2(DSQRT((1.0D0+EC)/(1.0D0-EC))*DSIN(E/2.0D0),
+     1  DCOS(E/2.0D0))
+      U=LS+V-M4-OM
+      L=DATAN2(DCOS(I)*DSIN(U),DCOS(U))+OM
+     1  +PI*(0.00705D0*DCOS(M5-M4-PI*48.958D0/180.0D0)
+     2  +0.00607D0*DCOS(2*M5-M4-PI*188.35D0/180.0D0)
+     3  +0.00445D0*DCOS(2*M5-2*M4-PI*191.897D0/180.0D0)
+     4  +0.00388D0*DCOS(M-2*M4+PI*20.495D0/180.0D0)
+     5  +0.00238D0*DCOS(M-M4+PI*35.097D0/180.0D0)
+     6  +0.00204D0*DCOS(2*M-3*M4+PI*158.638D0/180.0D0)
+     7  +0.00177D0*DCOS(3*M4-M2-PI*57.602D0/180.0D0)
+     8  +0.00136D0*DCOS(2*M-4*M4+PI*154.093D0/180.0D0)
+     9  +0.00104D0*DCOS(M5+PI*17.618D0/180.0D0))/180.0D0
+      R=A*(1.0D0-EC*DCOS(E))
+     1  +0.000053227D0*DCOS(M5-M4+PI*41.1306D0/180.0D0)
+     2  +0.000050989D0*DCOS(2*M5-2*M4-PI*101.9847D0/180.0D0)
+     3  +0.000038278D0*DCOS(2*M5-M4-PI*98.3292D0/180.0D0)
+     4  +0.000015996D0*DCOS(M-M4-PI*55.555D0/180.0D0)
+     5  +0.000014764D0*DCOS(2*M-3*M4+PI*68.622D0/180.0D0)
+     6  +0.000008966D0*DCOS(M5-2*M4+PI*43.615D0/180.0D0)
+     7  +0.000007914D0*DCOS(3*M5-2*M4-PI*139.737D0/180.0D0)
+     8  +0.000007004D0*DCOS(2*M5-3*M4-PI*102.888D0/180.0D0)
+     9  +0.000006620D0*DCOS(M-2*M4+PI*113.202D0/180.0D0)
+      R=R+0.000004930D0*DCOS(3*M5-3*M4-PI*76.243D0/180.0D0)
+     1  +0.000004693D0*DCOS(3*M-5*M4+PI*190.603D0/180.0D0)
+     2  +0.000004571D0*DCOS(2*M-4*M4+PI*244.702D0/180.0D0)
+     3  +0.000004409D0*DCOS(3*M5-M4-PI*115.828D0/180.0D0)
+      B=DATAN2(DSIN(U)*DSIN(I),SQRT(1.0D0-(DSIN(U)*DSIN(I))**2))
+      CALL GELIOS(JD,RS,S,VS,EZ,EP)
+      VS=PI*VS/180.0D0
+      LAMB=DATAN2(R*DCOS(B)*DSIN(L-VS),(R*DCOS(B)*DCOS(L-VS)+RS))+VS
+      DZ=DSQRT(RS**2+R**2+2*R*RS*DCOS(B)*DCOS(L-VS))
+      BET=DATAN2(R*DSIN(B)/DZ,DSQRT(1.0D0-(R*DSIN(B)/DZ)**2))
+      ALF=DATAN2((DSIN(LAMB)*DCOS(EP)
+     1   -DSIN(BET)*DSIN(EP)/DCOS(BET)),DCOS(LAMB))
+      SDEL=DSIN(BET)*DCOS(EP)+DCOS(BET)*DSIN(EP)*DSIN(LAMB)
+      CDEL=DSQRT(1.0D0-SDEL**2)
+      DEL=DATAN2(SDEL,CDEL)
+      K=SNGL(((R+DZ)**2-RS**2)/(4.0D0*R*DZ))
+      DS=4.68/DZ
+      RETURN
+      END
+      SUBROUTINE VENERA(JD,LAMB,BET,ALF,DEL,DZ,K,DS)
+C********************************************************
+C              ”…Œ…ˆ„› ‚……›                         *
+C             ˆ‘’ˆŽ… Ž‹Ž†…ˆ…                        *
+C-------------------------------------------------------*
+C        ‚•Ž„:                                          *
+C  JD - ž‹ˆ€‘Š€Ÿ „€’€                                  *
+C        ‚›•Ž„:                                         *
+C LAMB- „Ž‹ƒŽ’€ ( €„.)   ƒ…‹ˆŽ–…’ˆ—…‘Š€Ÿ             *
+C  BET- ˜ˆŽ’€  ( €„.)   ƒ…‹ˆŽ–…’ˆ—…‘Š€Ÿ             *
+C  ALF- ŸŒŽ… ‚Ž‘•Ž†„…ˆ… ( €„.)                      *
+C  DEL- ‘Š‹Ž…ˆ… ( €„.)                               *
+C  DZ - €‘‘’ŽŸˆ… „Ž ‡…Œ‹ˆ ( €‘’.…„.)                 *
+C  DS - ‚ˆ„ˆŒ›‰ “ƒ‹Ž‚Ž‰ €„ˆ“‘ (“ƒ‹.‘…Š.)               *
+C  K  - ”€‡€ ( Ž‘‚…™…€Ÿ —€‘’œ ‚ˆ„ŒŽƒŽ „ˆ‘Š€ )         *
+C********************************************************
+      DOUBLE PRECISION JD,PI,T,LS,A,EC,I,W,OM,M,M2,M5,
+     1                 L,E,R,U,RS,S(3),VS,EZ,EP,
+     2                 B,LAMB,DZ,BET,ALF,DEL,SDEL,CDEL
+	  INTEGER*4 N
+      REAL*4 K,DS
+      PI=4.0D0*DATAN(1.0D0)
+      T=(JD-2415020.0D0)/36525.0D0
+      LS=PI*(342.767053D0+58519.21191D0*T+0.0003097D0*T**2
+     1  +0.00077D0*DSIN(PI*(237.24D0+150.27D0*T)/180.0D0))/180.0D0
+      A=0.7233316D0
+      EC=0.00682069D0-0.00004774D0*T+0.000000091D0*T**2
+      I=PI*(3.393631D0+0.0010058D0*T-0.000001D0*T**2)/180.0D0
+      W=PI*(54.384186D0+0.5081861D0*T-0.0013864D0*T**2)/180.0D0
+      OM=PI*(75.779647D0+0.89985D0*T+0.00041D0*T**2)/180.0D0
+      M= PI*(358.47583D0+35999.04975D0*T
+     1  -0.00015D0*T**2-0.0000033D0*T**3)/180.0D0
+      M2=PI*(212.60322D0+58517.80387D0*T+0.001286D0*T**2
+     1  +0.00077D0*DSIN(PI*(237.24D0+150.27D0*T)/180.0D0))/180.0D0
+      M5=PI*(225.32833D0+3034.69202D0*T-0.000722D0*T**2)/180.0D0
+      CALL KEPLER(M2,EC,E,15,N)
+      V=2.0D0*DATAN2(DSQRT((1.0D0+EC)/(1.0D0-EC))*DSIN(E/2.0D0),
+     1  DCOS(E/2.0D0))
+      U=LS+V-M2-OM
+      L=DATAN2(DCOS(I)*DSIN(U),DCOS(U))+OM
+     1  +PI*(0.00313D0*DCOS(2*M-2*M2-PI*148.225D0/180.0D0)
+     2  +0.00198D0*DCOS(3*M-3*M2+PI*2.565D0/180.0D0)
+     3  +0.00136D0*DCOS(M-M2-PI*119.107D0/180.0D0)
+     4  +0.00096D0*DCOS(3*M-2*M2-PI*135.912D0/180.0D0)
+     5  +0.00082D0*DCOS(M5-M2-PI*208.087D0/180.0D0))/180.0D0
+      R=A*(1.0D0-EC*DCOS(E))
+     1  +0.000022501D0*DCOS(2*M-2*M2-PI*58.208D0/180.0D0)
+     2  +0.000019045D0*DCOS(3*M-3*M2+PI*92.577D0/180.0D0)
+     3  +0.000006887D0*DCOS(M5-M2-PI*118.09D0/180.0D0)
+     4  +0.000005172D0*DCOS(M-M2-PI*29.11D0/180.0D0)
+     5  +0.000003620D0*DCOS(5*M-4*M2-PI*104.208D0/180.0D0)
+     6  +0.000003283D0*DCOS(4*M-4*M2+PI*63.513D0/180.0D0)
+     7  +0.000003074D0*DCOS(2*M5-2*M2-PI*55.167D0/180.0D0)
+      B=DATAN2(DSIN(U)*DSIN(I),SQRT(1.0D0-(DSIN(U)*DSIN(I))**2))
+      CALL GELIOS(JD,RS,S,VS,EZ,EP)
+      VS=PI*VS/180.0D0
+      LAMB=DATAN2(R*DCOS(B)*DSIN(L-VS),(R*DCOS(B)*DCOS(L-VS)+RS))+VS
+      DZ=DSQRT(RS**2+R**2+2*R*RS*DCOS(B)*DCOS(L-VS))
+      BET=DATAN2(R*DSIN(B)/DZ,DSQRT(1.0D0-(R*DSIN(B)/DZ)**2))
+      ALF=DATAN2((DSIN(LAMB)*DCOS(EP)
+     1   -DSIN(BET)*DSIN(EP)/DCOS(BET)),DCOS(LAMB))
+      SDEL=DSIN(BET)*DCOS(EP)+DCOS(BET)*DSIN(EP)*DSIN(LAMB)
+      CDEL=DSQRT(1.0D0-SDEL**2)
+      DEL=DATAN2(SDEL,CDEL)
+      K=SNGL(((R+DZ)**2-RS**2)/(4.0D0*R*DZ))
+      DS=8.41/DZ
+      RETURN
+      END
+      SUBROUTINE MERCUR(JD,LAMB,BET,ALF,DEL,DZ,K,DS)
+C********************************************************
+C              ”…Œ…ˆ„› Œ…Š“ˆŸ                       *
+C              ˆ‘’ˆŽ… Ž‹Ž†…ˆ…                       *
+C-------------------------------------------------------*
+C        ‚•Ž„:                                          *
+C  JD - ž‹ˆ€‘Š€Ÿ „€’€                                  *
+C        ‚›•Ž„:                                         *
+C LAMB- „Ž‹ƒŽ’€ ( €„.)   ƒ…‹ˆŽ–…’ˆ—…‘Š€Ÿ             *
+C  BET- ˜ˆŽ’€  ( €„.)   ƒ…‹ˆŽ–…’ˆ—…‘Š€Ÿ             *
+C  ALF- ŸŒŽ… ‚Ž‘•Ž†„…ˆ… ( €„.)                      *
+C  DEL- ‘Š‹Ž…ˆ… ( €„.)                               *
+C  DZ - €‘‘’ŽŸˆ… „Ž ‡…Œ‹ˆ ( €‘’.…„.)                 *
+C  DS - ‚ˆ„ˆŒ›‰ “ƒ‹Ž‚Ž‰ €„ˆ“‘ (“ƒ‹.‘…Š.)               *
+C  K  - ”€‡€ ( Ž‘‚…™…€Ÿ —€‘’œ ‚ˆ„ŒŽƒŽ „ˆ‘Š€ )         *
+C********************************************************
+      DOUBLE PRECISION JD,PI,T,LS,A,EC,I,W,OM,
+     1                 M1,M2,M5,L,E,R,U,RS,S(3),VS,EZ,EP,
+     2                 B,LAMB,DZ,BET,ALF,DEL,SDEL,CDEL
+      INTEGER*4 N
+	  REAL*4 K,DS
+      PI=4.0D0*DATAN(1.0D0)
+      T=(JD-2415020.0D0)/36525.0D0
+      LS=PI*(178.179078D0+149474.07078D0*T+0.0003011D0*T**2)/180.0D0
+      A=0.3870986D0
+      EC=0.20561421D0+0.00002046D0*T-0.00000003D0*T**2
+      I=PI*(7.002881D0+0.0018608D0*T-0.0000183D0*T**2)/180.0D0
+      W=PI*(28.753753D0+0.3702806D0*T+0.0001208D0*T**2)/180.0D0
+      OM=PI*(47.145944D0+1.1852083D0*T+0.0001739D0*T**2)/180.0D0
+      M1=PI*(102.27938D0+149472.51529D0*T+0.000007D0*T**2)/180.0D0
+      M2=PI*(212.60322D0+58517.80387D0*T+0.001286D0*T**2)/180.0D0
+      M5=PI*(225.32833D0+3034.69202D0*T-0.000722D0*T**2)/180.0D0
+      CALL KEPLER(M1,EC,E,15,N)
+      V=2.0D0*DATAN2(DSQRT((1.0D0+EC)/(1.0D0-EC))*DSIN(E/2.0D0),
+     1  DCOS(E/2.0D0))
+      U=LS+V-M1-OM
+      L=DATAN2(DCOS(I)*DSIN(U),DCOS(U))+OM
+     1  +PI*(0.00204D0*DCOS(5*M2-2*M1+PI*12.22D0/180.0D0)
+     2  +0.00103D0*DCOS(2*M2-M1-PI*160.692D0/180.0D0)
+     3  +0.00091D0*DCOS(2*M5-M1-PI*37.003D0/180.0D0)
+     4  +0.00078D0*DCOS(5*M2-3*M1+PI*10.137D0/180.0D0))/180.0D0
+      R=A*(1.0D0-EC*DCOS(E))
+     1  +0.000007525D0*DCOS(2*M5-M1+PI*53.013D0/180.0D0)
+     2  +0.000006802D0*DCOS(5*M2-3*M1-PI*259.918D0/180.0D0)
+     3  +0.000005457D0*DCOS(2*M2-2*M1-PI*71.188D0/180.0D0)
+     4  +0.000003569D0*DCOS(5*M2-M1-PI*77.75D0/180.0D0)
+      B=DATAN2(DSIN(U)*DSIN(I),SQRT(1.0D0-(DSIN(U)*DSIN(I))**2))
+      CALL GELIOS(JD,RS,S,VS,EZ,EP)
+      VS=PI*VS/180.0D0
+      LAMB=DATAN2(R*DCOS(B)*DSIN(L-VS),(R*DCOS(B)*DCOS(L-VS)+RS))+VS
+      DZ=DSQRT(RS**2+R**2+2*R*RS*DCOS(B)*DCOS(L-VS))
+      BET=DATAN2(R*DSIN(B)/DZ,DSQRT(1.0D0-(R*DSIN(B)/DZ)**2))
+      ALF=DATAN2((DSIN(LAMB)*DCOS(EP)
+     1   -DSIN(BET)*DSIN(EP)/DCOS(BET)),DCOS(LAMB))
+      SDEL=DSIN(BET)*DCOS(EP)+DCOS(BET)*DSIN(EP)*DSIN(LAMB)
+      CDEL=DSQRT(1.0D0-SDEL**2)
+      DEL=DATAN2(SDEL,CDEL)
+      K=SNGL(((R+DZ)**2-RS**2)/(4.0D0*R*DZ))
+      DS=3.34/DZ
+      RETURN
+      END
+      SUBROUTINE UPITER(JD,LAMB,BET,ALF,DEL,DZ,DSE,DSP)
+C********************************************************
+C              ”…Œ…ˆ„› žˆ’…€                        *
+C              ˆ‘’ˆŽ… Ž‹Ž†…ˆ…                       *
+C-------------------------------------------------------*
+C        ‚•Ž„:                                          *
+C  JD - ž‹ˆ€‘Š€Ÿ „€’€                                  *
+C        ‚›•Ž„:                                         *
+C LAMB- „Ž‹ƒŽ’€ (  €„.)   ƒ…‹ˆŽ–…’ˆ—…‘Š€Ÿ            *
+C  BET- ˜ˆŽ’€  (  €„.)   ƒ…‹ˆŽ–…’ˆ—…‘Š€Ÿ            *
+C  ALF- ŸŒŽ… ‚Ž‘•Ž†„…ˆ… (  €„.)                     *
+C  DEL- ‘Š‹Ž…ˆ… (  €„.)                              *
+C  DZ - €‘‘’ŽŸˆ… „Ž ‡…Œ‹ˆ ( €‘’.…„.)                 *
+C  DS - ‚ˆ„ˆŒ›‰ “ƒ‹Ž‚Ž‰ €„ˆ“‘ (“ƒ‹.‘…Š.)               *
+C          DSE - Š‚€’Žˆ€‹œ›‰                         *
+C          DSP - Ž‹Ÿ›‰                               *
+C********************************************************
+      DOUBLE PRECISION JD,LAMB,BET,ALF,DEL,DZ,PI,A,SK,CK,S2K,C2K,
+     1                 T,U,P,Q,S,V,W,KSI,E,L,R,B,S3K,C3K,SQ,CQ,
+     2                 LS,AU,EC,I,WU,OM,VU,UU,M5,BB,S2Q,C2Q,
+     3                 RS,SS(3),VS,EZ,EP,SDEL,CDEL
+      REAL*4 DSE,DSP
+	  INTEGER*4 N
+      PI=4.0D0*DATAN(1.0D0)
+      T=(JD-2415020.0D0)/36525.0D0
+      LS=PI*(238.049257D0+3036.301986D0*T+0.0003347D0*T**2
+     1  -0.00000165D0*T**3)/180.0D0
+      AU=5.202561D0
+      EC=0.04833475D0+0.00016418D0*T-0.0000004676D0*T**2
+     1  -0.0000000017D0*T**3
+      I =PI*(1.308736D0-0.0056961D0*T+0.0000039D0*T**2)/180.0D0
+      WU=PI*(273.277558D0+0.5994317D0*T+0.00070405D0*T**2
+     1  +0.00000508D0*T**3)/180.0D0
+      OM=PI*(99.443414D0+1.01053D0*T+0.00035222D0*T**2
+     1  -0.00000851D0*T**3)/180.0D0
+      U=T/5.0D0+0.1D0
+      P=PI*(237.47555D0+3034.9061D0*T)/180.0D0
+      Q=PI*(265.91650D0+1222.1139D0*T)/180.0D0
+      S=PI*(243.51721D0+428.46770D0*T)/180.0D0
+      V=5*Q-2*P
+      W=2*P-6*Q+3*S
+      KSI=Q-P
+      SK=DSIN(KSI)
+      CK=DCOS(KSI)
+      S2K=DSIN(2*KSI)
+      C2K=DCOS(2*KSI)
+      S3K=DSIN(3*KSI)
+      C3K=DCOS(3*KSI)
+      SQ=DSIN(Q)
+      CQ=DCOS(Q)
+      S2Q=DSIN(2*Q)
+      C2Q=DCOS(2*Q)
+      A=PI*((0.331364D0-0.010281D0*U-0.004692D0*U**2)*DSIN(V)
+     1 +(0.003228D0-0.064436D0*U+0.002075D0*U**2)*DCOS(V)
+     2 -(0.003083D0+0.000275D0*U-0.000489D0*U**2)*DSIN(2*V)
+     3 +0.002472D0*DSIN(W)+0.013619D0*SK+0.018472D0*S2K
+     4 +0.006717D0*S3K+0.002775D0*DSIN(4*KSI)
+     5 +(0.007275D0-0.001253D0*U)*SK*SQ
+     6 +0.006417D0*S2K*SQ+0.002439D0*S3K*SQ
+     7 -(0.033839D0+0.001125D0*U)*CK*SQ
+     8 -0.003767D0*C2K*SQ-0.004261D0*S2K*CQ
+     9 -(0.035681D0+0.001208D0*U)*SK*CQ)/180.0D0
+      A=A+(PI/180.0D0)*(0.002178*CQ
+     1 +(-0.006333D0+0.001161D0*U)*CK*CQ
+     2 -0.006675D0*C2K*CQ-0.002664D0*C3K*CQ
+     3 -0.002572D0*SK*S2Q-0.003567D0*S2K*S2Q
+     4 +0.002094D0*CK*C2Q+0.003342D0*C2K*C2Q)
+      LS=LS+A
+      BB=(PI/180.0D0)*((0.007192D0-0.003147D0*U)*DSIN(V)
+     1 +(-0.020428D0-0.000675D0*U+0.000197D0*U**2)*DCOS(V)
+     2 +(0.007269D0+0.000672D0*U)*SK*SQ
+     3 -0.004344D0*SQ+0.034036D0*CK*SQ
+     4 +0.005614D0*C2K*SQ+0.002964D0*C3K*SQ
+     5 +0.037761D0*SK*CQ+0.006158D0*S2K*CQ
+     6 -0.006603D0*CK*CQ-0.005356D0*SK*S2Q
+     7 +0.002722D0*S2K*S2Q+0.004483D0*CK*S2Q
+     8 -0.002642D0*C2K*S2Q+0.004403D0*SK*C2Q
+     9 -0.002536D0*S2K*C2Q+0.005547D0*CK*C2Q)
+      BB=BB-PI*0.002689D0*C2K*C2Q/180.0D0
+      WU=WU+BB
+      M5=PI*(225.32833D0+3034.69202D0*T-0.000722D0*T**2)/180.0D0+A-BB/EC
+      EC=EC+1.0D-7*((3606.0D0+130.0D0*U-43.0D0*U**2)*DSIN(V)
+     1 +(1289.0D0-580.0D0*U)*DCOS(V)-6764.0D0*SK*SQ
+     2 -1110.0D0*S2K*SQ-224.0D0*S3K*SQ
+     3 -204.0D0*SQ+(1284.0D0+116.0D0*U)*CK*SQ
+     4 +188.0D0*C2K*SQ+224.0D0*S2K*CQ
+     5 +(1460.0D0+130.0D0*U)*SK*CQ-817.0D0*CQ
+     6 +6074.0D0*CK*CQ+992.0D0*C2K*CQ
+     7 +508.0D0*C3K*CQ+230.0D0*DCOS(4*KSI)*CQ
+     8 +108.0D0*DCOS(5*KSI)*CQ+448.0D0*S2K*S2Q
+     9 -(956.0D0+73.0D0*U)*SK*S2Q)
+      EC=EC+1.0D-7*(137.0D0*S3K*S2Q
+     1 +(-997.0D0+108.0D0*U)*CK*S2Q
+     2 +480.0D0*C2K*S2Q+148.0D0*C3K*S2Q
+     3 +(-956.0D0+99.0D0*U)*SK*C2Q+179.0D0*C2Q
+     4 +490.0D0*S2K*C2Q+158.0D0*S3K*C2Q
+     5 +(1024.0D0+75.0D0*U)*CK*C2Q
+     6 -437.0D0*C2K*C2Q-132.0D0*C3K*C2Q)
+      AU=AU+1.0D-6*(-263.0D0*DCOS(V)+205.0D0*CK
+     1 +693.0D0*C2K+312.0D0*C3K+147.0D0*DCOS(4*KSI)
+     2 +299.0D0*SK*SQ+181.0D0*C2K*SQ
+     3 +204.0D0*S2K*CQ+111.0D0*S3K*CQ
+     4 -337.0D0*CK*CQ-111.0D0*C2K*CQ)
+      CALL KEPLER(M5,EC,E,15,N)
+      VU=2.0D0*DATAN2(DSQRT((1.0D0+EC)/(1.0D0-EC))*DSIN(E/2.0D0),
+     1  DCOS(E/2.0D0))
+      UU=LS+VU-M5-OM
+      L=DATAN2(DCOS(I)*DSIN(UU),DCOS(UU))+OM
+      R=AU*(1.0D0-EC*DCOS(E))
+      B=DATAN2(DSIN(UU)*DSIN(I),SQRT(1.0D0-(DSIN(UU)*DSIN(I))**2))
+      CALL GELIOS(JD,RS,SS,VS,EZ,EP)
+      VS=PI*VS/180.0D0
+      LAMB=DATAN2(R*DCOS(B)*DSIN(L-VS),(R*DCOS(B)*DCOS(L-VS)+RS))+VS
+      DZ=DSQRT(RS**2+R**2+2*R*RS*DCOS(B)*DCOS(L-VS))
+      BET=DATAN2(R*DSIN(B)/DZ,DSQRT(1.0D0-(R*DSIN(B)/DZ)**2))
+      ALF=DATAN2((DSIN(LAMB)*DCOS(EP)
+     1   -DSIN(BET)*DSIN(EP)/DCOS(BET)),DCOS(LAMB))
+      SDEL=DSIN(BET)*DCOS(EP)+DCOS(BET)*DSIN(EP)*DSIN(LAMB)
+      CDEL=DSQRT(1.0D0-SDEL**2)
+      DEL=DATAN2(SDEL,CDEL)
+      DSE=98.47/DZ
+      DSP=91.91/DZ
+      RETURN
+      END
+      SUBROUTINE UGOL(ORB,SN,T,PSITEK,PSIMIN,PSIMAX,PSIEKB,
+     *                VID,TX1,TY1,TX2,TY2)
+********************************************************************
+*  p/p dlq ras~eta uglow isto~nik-obxekt-zemlq                     *
+*------------------------------------------------------------------*
+*       whod:                                                      *
+*  ORB(6) - orbitalxnye |l-ty                                      *
+*  SN(3)  - koordinaty isto~nika                                   *
+*   T(6)  - wremq |kwatora witka (gg.mm.dd ~~.mm.ss)               *
+*  PSITEK - ugol isto~nik-zemlq-obxekt                             *
+*       wyhod:                                                     *
+*  PSIMIN - minimalxnyj ugol ioz                                   *
+*  PSIMAX - mAksimalxnyj ugol ioz                                  *
+*  PSIekw - ugol ioz w |kwatore                                    *
+*  VID - parametr ugla ioz                                         *
+*  TX  - wremq prohovdeniq |kwatora ~~.mm.ss                       *
+*  TX1 - wremq dostiveniq minimalxnogo  ugla ioz                   *
+*  TY1 - wremq dostiveniq maksimalxnogo ugla ioz                   *
+*  TX2 - wremq dostiveniq ioz na wozrastanii ili ubywanii          *
+*  TY2 - wremq dostiveniq ioz na ubywanii ili wozrastanii          *
+********************************************************************
+      REAL*4 ORB(6),SN(3),Q(3),P(3)
+      INTEGER*2 T(6),TX1(3),TY1(3),TX2(3),TY2(3),VID
+      DATA RZEM/6378166.0/
+      PI=4.0*ATAN(1.0)
+      EE=ORB(6)
+      AR=ORB(1)/RZEM
+      AE=SQRT(1.0-ORB(2)**2)
+      RN=0.07436574/(60.0*SQRT((AR)**3)) ! ugl.skorostx wra}eniq zemli
+         TEK=DMVSEK(T(4))
+      T3=TEK-(EE-ORB(2)*SIN(EE))/RN
+      TPER=60.0*PERIOD(ORB(1),180.0*ORB(3)/PI)
+      Q(1)=-SIN(ORB(5))*COS(ORB(4))-COS(ORB(5))*SIN(ORB(4))*COS(ORB(3))
+      Q(2)=-SIN(ORB(5))*SIN(ORB(4))+COS(ORB(5))*COS(ORB(4))*COS(ORB(3))
+      Q(3)=COS(ORB(5))*SIN(ORB(3))
+      P(1)=COS(ORB(5))*COS(ORB(4))-SIN(ORB(5))*SIN(ORB(4))*COS(ORB(3))
+      P(2)=COS(ORB(5))*SIN(ORB(4))+SIN(ORB(5))*COS(ORB(4))*COS(ORB(3))
+      P(3)=SIN(ORB(5))*SIN(ORB(3))
+C--------------------------------------------------------------
+      BET=(SN(1)*P(1)+SN(2)*P(2)+SN(3)*P(3))/SQRT(RMODUL(SN))
+      CSI=(SN(1)*Q(1)+SN(2)*Q(2)+SN(3)*Q(3))/SQRT(RMODUL(SN))
+*------------<PSI> w moment |kwatora------------------------------
+      PSIEKB=ACOS((BET*ORB(2)-BET*COS(EE)-CSI*SIN(EE)*AE)/
+     *       (ORB(2)*COS(EE)-1.0))
+      PSIEKB=180.0*PSIEKB/PI
+*---------------------------------------------------------------
+      PSIMIN=ACOS(SQRT(BET**2+CSI**2))
+      PSIMAX=ACOS(-1.0*SQRT(BET**2+CSI**2))
+      A0=SQRT((BET+ORB(2)*COS(PSIMIN))**2+(1.0-ORB(2)**2)*CSI**2)
+      COSGAM=(BET+ORB(2)*COS(PSIMIN))/A0
+      SINGAM=CSI*SQRT(1.0-ORB(2)**2)/A0
+      EMIN=ATAN2(SINGAM,COSGAM)
+      EMAX=EMIN+PI
+      PSIMIN=180.0*PSIMIN/PI
+      PSIMAX=180.0*PSIMAX/PI
+      IF(EMIN.LT.EE) EMIN=EMIN+2.0*PI
+      IF(EMAX.LT.EE) EMAX=EMAX+2.0*PI
+      TMIN=(EMIN-ORB(2)*SIN(EMIN))/RN+T3
+      TMAX=(EMAX-ORB(2)*SIN(EMAX))/RN+T3
+      CALL TIM2(TMIN,TX1,I)  !wremq minimalxnogo  PSI!
+      CALL TIM2(TMAX,TY1,I)  !wremq maksimalxnogo PSI!
+*--------------PSI teku}ij---------------------------
+      PSITEK=PI*PSITEK/180.0
+      PSI=PSITEK
+      IF(PSITEK.GT.(PI/2).AND.PSITEK.LE.PI) PSI=PI-PSITEK
+*------------------------------------------------
+      A0=SQRT((BET+ORB(2)*COS(PSI))**2+(1.0-ORB(2)**2)*CSI**2)
+      COSGAM=(BET+ORB(2)*COS(PSI))/A0
+      SINGAM=CSI*SQRT(1.0-ORB(2)**2)/A0
+      GAM=ATAN2(SINGAM,COSGAM)
+      IF(PSITEK.GT.(PI/2).AND.PSITEK.LE.PI) GAM=GAM+PI
+*------------uslowie su}estwowaniq dannogo PSI-------------------
+       IF(ABS(COS(PSITEK))-SQRT(BET**2+CSI**2)) 4,4,3
+3      VID=0
+       GOTO 99
+*----------------
+4     EVX=GAM-ACOS((BET*ORB(2)+COS(PSI))/A0)  ! k PSIMIN !
+      EVIX=GAM+ACOS((BET*ORB(2)+COS(PSI))/A0) ! ot PSIMIN !
+      IF(EVX.LT.EE)  EVX=EVX+2.0*PI
+      IF(EVIX.LT.EE) EVIX=EVIX+2.0*PI
+*-------------------------------------------------
+      TVX=(EVX-ORB(2)*SIN(EVX))/RN+T3
+      TVIX=(EVIX-ORB(2)*SIN(EVIX))/RN+T3
+      IF(TEK.GT.TVX) TVX=TVX+TPER
+      IF((TEK+TPER).LT.TVX) TVX=TVX-TPER
+      IF(TEK.GT.TVIX) TVIX=TVIX+TPER
+      IF((TEK+TPER).LT.TVIX) TVIX=TVIX-TPER
+      CALL TIM2(TVX,TX2,I)
+      CALL TIM2(TVIX,TY2,I)
+      IF(PSITEK.GE.0.0.AND.PSITEK.LE.(PI/2.0)) VID=2
+      IF(PSITEK.GT.(PI/2.0).AND.PSITEK.LE.PI)  VID=1
+      PSITEK=180.0*PSITEK/PI
+*------------------------------------------------------
+99    RETURN
+      END
+      SUBROUTINE SATURN(JD,LAMB,BET,ALF,DEL,DZ,DSE,DSP)
+C********************************************************
+C              ”…Œ…ˆ„› ‘€’“€                        *
+C              ˆ‘’ˆŽ… Ž‹Ž†…ˆ…                       *
+C-------------------------------------------------------*
+C        ‚•Ž„:                                          *
+C  JD - ž‹ˆ€‘Š€Ÿ „€’€                                  *
+C        ‚›•Ž„:                                         *
+C LAMB- „Ž‹ƒŽ’€ (  €„.)   ƒ…‹ˆŽ–…’ˆ—…‘Š€Ÿ            *
+C  BET- ˜ˆŽ’€  (  €„.)   ƒ…‹ˆŽ–…’ˆ—…‘Š€Ÿ            *
+C  ALF- ŸŒŽ… ‚Ž‘•Ž†„…ˆ… (  €„.)                     *
+C  DEL- ‘Š‹Ž…ˆ… (  €„.)                              *
+C  DZ - €‘‘’ŽŸˆ… „Ž ‡…Œ‹ˆ ( €‘’.…„.)                 *
+C  DS - ‚ˆ„ˆŒ›‰ “ƒ‹Ž‚Ž‰ €„ˆ“‘ (“ƒ‹.‘…Š.)               *
+C          DSE - Š‚€’Žˆ€‹œ›‰                         *
+C          DSP - Ž‹Ÿ›‰                               *
+C********************************************************
+      DOUBLE PRECISION JD,LAMB,BET,ALF,DEL,DZ,PI,A,SK,CK,S2K,C2K,
+     1                 T,U,P,Q,S,V,W,KSI,E,L,R,B,FI,S3K,C3K,S4K,C4K,
+     2                 LS,AU,EC,I,WU,OM,VU,UU,M6,BB,SQ,CQ,S2Q,C2Q,
+     3                 RS,SS(3),VS,EZ,EP,SDEL,CDEL,S3Q,C3Q
+      REAL*4 DSE,DSP
+	  INTEGER*4 N
+      PI=4.0D0*DATAN(1.0D0)
+      T=(JD-2415020.0D0)/36525.0D0
+      LS=PI*(266.564377D0+1223.509884D0*T+0.0003245D0*T**2
+     1  -0.0000058D0*T**3)/180.0D0
+      AU=9.554747D0
+      EC=0.05589232D0-0.0003455D0*T-0.000000728D0*T**2
+     1  +0.00000000074D0*T**3
+      I =PI*(2.492519D0-0.0039189D0*T-0.00001549D0*T**2
+     1  +0.00000004D0*T**3)/180.0D0
+      WU=PI*(338.3078D0+1.0852207D0*T+0.00097854D0*T**2
+     1  +0.00000992D0*T**3)/180.0D0
+      OM=PI*(112.790414D0+0.8731951D0*T-0.00015218D0*T**2
+     1  -0.00000531D0*T**3)/180.0D0
+      U=T/5.0D0+0.1D0
+      P=PI*(237.47555D0+3034.9061D0*T)/180.0D0
+      Q=PI*(265.91650D0+1222.1139D0*T)/180.0D0
+      S=PI*(243.51721D0+428.46770D0*T)/180.0D0
+      V=5*Q-2*P
+      W=2*P-6*Q+3*S
+      KSI=Q-P
+      FI=S-Q
+      SK=DSIN(KSI)
+      CK=DCOS(KSI)
+      S2K=DSIN(2*KSI)
+      C2K=DCOS(2*KSI)
+      S3K=DSIN(3*KSI)
+      C3K=DCOS(3*KSI)
+      S4K=DSIN(4*KSI)
+      C4K=DCOS(4*KSI)
+      SQ=DSIN(Q)
+      CQ=DCOS(Q)
+      S2Q=DSIN(2*Q)
+      C2Q=DCOS(2*Q)
+      S3Q=DSIN(3*Q)
+      C3Q=DCOS(3*Q)
+      A=PI*((-0.814181D0+0.01815D0*U+0.016714D0*U**2)*DSIN(V)
+     1 +(-0.010497D0+0.160906D0*U-0.0041D0*U**2)*DCOS(V)
+     2 +0.007581D0*DSIN(2*V)-0.007986D0*DSIN(W)
+     3 -0.148811D0*SK-0.040786D0*S2K
+     4 -0.015208D0*S3K-0.006339D0*S4K
+     5 +(0.008931D0+0.002728D0*U)*SK*SQ-0.006244D0*SQ
+     6 -0.0165D0*S2K*SQ-0.005775D0*S3K*SQ
+     7 +(0.081344D0+0.003206D0*U)*CK*SQ
+     8 +0.015019D0*C2K*SQ
+     9 +(0.085581D0+0.002494D0*U)*SK*CQ)/180.0D0
+      A=A+(PI/180.0D0)*((0.025328D0-0.003117D0*U)*CK*CQ
+     1 +0.007525D0*DSIN(3*FI)*S2Q-0.007528D0*DCOS(3*FI)*C2Q
+     2 +0.014394D0*C2K*CQ+0.006319D0*C3K*CQ
+     3 +0.006369D0*SK*S2Q+0.009156D0*S2K*S2Q
+     4 -0.005236D0*CK*C2Q-0.007736D0*C2K*C2Q)
+      LS=LS+A
+      BB=(PI/1.8D+2)*((0.077108D0+0.007186D0*U-0.001533D0*U**2)*DSIN(V)
+     1 +(0.045803D0-0.014766D0*U-0.000536D0*U**2)*DCOS(V)
+     2 -(0.013597D0+0.001719D0*U)*SK*S2Q
+     3 -0.007075D0*SK-0.075825D0*SK*SQ
+     4 -0.024839D0*S2K*SQ-0.008631D0*S3K*SQ
+     5 -0.072586D0*CQ-0.150383D0*CK*CQ
+     6 +0.026897D0*C2K*CQ+0.010053D0*C3K*CQ
+     7 +(-0.007742D0+0.001517D0*U)*CK*S2Q
+     8 +(0.013586D0-0.001375D0*U)*C2K*S2Q
+     9 +(-0.013667D0+0.001239D0*U)*SK*C2Q)
+      BB=BB+PI*(0.011981D0*S2K*C2Q
+     1 +(0.014861D0+0.001136D0*U)*CK*C2Q
+     2 -(0.013064D0+0.001628D0*U)*C2K*C2Q)/180.0D0
+      WU=WU+BB
+      M6=PI*(175.46622D0+1221.55147D0*T-0.000502D0*T**2)/180.0D0+A-BB/EC
+      EC=EC+1.0D-7*((-7927.0D0+2548.0D0*U+91.0D0*U**2)*DSIN(V)
+     1 +(13381.0D0+1226.0D0*U-253.0D0*U**2)*DCOS(V)
+     2 +(248.0D0-121.0D0*U)*DSIN(2*V)-(305.0D0+91.0D0*U)*DCOS(2*V)
+     3 +(165.0D0-204.0D0*U)*S2K*SQ+412.0D0*S2K
+     4 +(390.0D0-617.0D0*U)*SK*SQ+12415.0D0*SQ
+     5 +26599.0D0*CK*SQ-4687.0D0*C2K*SQ
+     6 -1870.0D0*C3K*SQ-821.0D0*C4K*SQ
+     7 -377.0D0*DCOS(5*KSI)*SQ+497.0D0*DCOS(2*FI)*SQ
+     8 +(163.0D0-611.0D0*U)*CQ-12696.0D0*SK*CQ
+     9 -4200.0D0*S2K*CQ-1503.0D0*S3K*CQ)
+      EC=EC+1.0D-7*(-619.0D0*S4K*CQ-350.0D0*S2Q
+     1 -268.0D0*DSIN(5*KSI)*CQ+461.0D0*DSIN(2*FI)*CQ
+     2 -(282.0D0+1306.0D0*U)*CK*CQ
+     3 +(-86.0D0+230.0D0*U)*C2K*CQ
+     4 +(2211.0D0-286.0D0*U)*SK*S2Q
+     5 -(2780.0D0+222.0D0*U)*CK*S2Q
+     6 +(2022.0D0+263.0D0*U)*C2K*S2Q-490.0D0*C2Q
+     7 -2208.0D0*S2K*S2Q+248.0D0*C3K*S2Q
+     8 -568.0D0*S3K*S2Q+242.0D0*DSIN(3*FI)*S2Q
+     9 -346.0D0*S4K*S2Q+467.0D0*DCOS(3*FI)*S2Q)
+      EC=EC+1.0D-7*(-(2842.0D0+279.0D0*U)*SK*C2Q
+     1 +(128.0D0+226.0D0*U)*S2K*C2Q
+     2 +(-1594.0D0+282.0D0*U)*CK*C2Q
+     3 +(2162.0D0-207.0D0*U)*C2K*C2Q
+     4 +224.0D0*S3K*C2Q+561.0D0*C3K*C2Q
+     5 +343.0D0*C4K*C2Q+469.0D0*DSIN(3*FI)*C2Q
+     6 -242.0D0*DCOS(3*FI)*C2Q-205.0D0*SK*S3Q
+     7 +262.0D0*S3K*S3Q+208.0D0*CK*C3Q
+     8 -271.0D0*C3K*C3Q-382.0D0*C3K*DSIN(4*Q)
+     9 -376.0D0*S3K*DCOS(4*Q))
+      AU=AU+1.0D-6*(572.0D0*U*DSIN(V)+2933.0D0*DCOS(V)
+     1 +33629.0D0*CK-3081.0D0*C2K-1423.0D0*C3K
+     2 -671.0D0*C4K-320.0D0*DCOS(5*KSI)+1098.0D0*SQ
+     3 -2812.0D0*SK*SQ+688.0D0*S2K*SQ
+     4 -393.0D0*S3K*SQ-228.0D0*S4K*SQ
+     5 +2138.0D0*CK*SQ-999.0D0*C2K*SQ
+     6 -642.0D0*C3K*SQ-325.0D0*C4K*SQ
+     7 -890.0D0*CQ+2206.0D0*SK*CQ
+     8 -1590.0D0*S2K*CQ-647.0D0*S3K*CQ
+     9 -344.0D0*S4K*CQ+2885.0D0*CK*CQ)
+      AU=AU+1.0D-6*((2172.0D0+102.0D0*U)*C2K*CQ
+     1 +296.0D0*C3K*CQ-267.0D0*S2K*S2Q
+     2 -778.0D0*CK*S2Q+495.0D0*C2K*S2Q
+     3 +250.0D0*C3K*S2Q-856.0D0*SK*C2Q
+     4 +441.0D0*S2K*C2Q+296.0D0*C2K*C2Q
+     5 +211.0D0*C3K*C2Q-427.0D0*SK*S3Q
+     6 +398.0D0*S3K*S3Q+344.0D0*CK*C3Q
+     7 -427.0D0*C3K*C3Q)
+      CALL KEPLER(M6,EC,E,15,N)
+      VU=2.0D0*DATAN2(DSQRT((1.0D0+EC)/(1.0D0-EC))*DSIN(E/2.0D0),
+     1  DCOS(E/2.0D0))
+      UU=LS+VU-M6-OM
+      L=DATAN2(DCOS(I)*DSIN(UU),DCOS(UU))+OM
+      R=AU*(1.0D0-EC*DCOS(E))
+      B=DATAN2(DSIN(UU)*DSIN(I),SQRT(1.0D0-(DSIN(UU)*DSIN(I))**2))
+     1 +PI*(0.000747D0*CK*SQ+0.001069D0*CK*CQ
+     2 +0.002108D0*S2K*S2Q
+     3 +0.001261D0*C2K*S2Q
+     4 +0.001236D0*S2K*C2Q
+     5 -0.002075D0*C2K*C2Q)/180.0D0
+      CALL GELIOS(JD,RS,SS,VS,EZ,EP)
+      VS=PI*VS/180.0D0
+      LAMB=DATAN2(R*DCOS(B)*DSIN(L-VS),(R*DCOS(B)*DCOS(L-VS)+RS))+VS
+      DZ=DSQRT(RS**2+R**2+2*R*RS*DCOS(B)*DCOS(L-VS))
+      BET=DATAN2(R*DSIN(B)/DZ,DSQRT(1.0D0-(R*DSIN(B)/DZ)**2))
+      ALF=DATAN2((DSIN(LAMB)*DCOS(EP)
+     1   -DSIN(BET)*DSIN(EP)/DCOS(BET)),DCOS(LAMB))
+      SDEL=DSIN(BET)*DCOS(EP)+DCOS(BET)*DSIN(EP)*DSIN(LAMB)
+      CDEL=DSQRT(1.0D0-SDEL**2)
+      DEL=DATAN2(SDEL,CDEL)
+      DSE=83.33/DZ
+      DSP=74.57/DZ
+      RETURN
+      END
+      SUBROUTINE LUNA(JD,LAMB,BET,PAR,ALF,BI,R,FAZ)
+C********************************************************
+C              ”…Œ…ˆ„› ‹“›                           *
+C-------------------------------------------------------*
+C        ‚•Ž„:                                          *
+C  JD - ž‹ˆ€‘Š€Ÿ „€’€                                  *
+C        ‚›•Ž„:                                         *
+C LAMB- „Ž‹ƒŽ’€ ( ƒ€„.)                                *
+C  BET- ˜ˆŽ’€  ( ƒ€„.)                                *
+C  PAR- €€‹€Š‘ ƒŽˆ‡Ž’€‹œ›‰, Š‚€’Žˆ€‹œ›‰ ( ƒ€„.)*
+C  ALF- ŸŒŽ… ‚Ž‘•Ž†„…ˆ… ( ƒ€„.)                     *
+C  BI - ‘Š‹Ž…ˆ… ( ƒ€„.)                              *
+C  R  - ƒ…Ž–…’ˆ—…‘ŠŽ… €‘‘’ŽŸˆ… ( Š‚.€„ˆ“‘.)       *
+C  FAZ- ”€‡€ ( Ž‘‚…™…€Ÿ —€‘’œ ‚ˆ„ŒŽƒŽ „ˆ‘Š€ )         *
+C********************************************************
+      DOUBLE PRECISION JD,GRRAD,RADGR,LAMB,BET,PAR,T,L,
+     1                 PI,M,M1,D,F,Q,DD,DD1,E,E2,B,W1,W2,
+     2                 ALF,BI,SB,CB,EP,DC
+      REAL*4 R,FAZ
+      PI=4.0D0*DATAN(1.0D0)
+      GRRAD=PI/180.0D0
+      RADGR=180.0D0/PI
+      T=(JD-2415020.0D0)/36525.0D0
+      DD=0.003964D0*DSIN(GRRAD*(346.560D0
+     1  +132.870D0*T-0.0091731D0*T**2))
+      DD1=DSIN(GRRAD*(51.2D0+20.2D0*T))
+      Q=GRRAD*(259.183275D0-1934.1420D0*T
+     1 +0.002078D0*T**2+0.0000022D0*T**3)
+      L=270.434164D0+481267.8831D0*T
+     1 -0.001133D0*T**2+0.0000019D0*T**3
+     2 +0.000233D0*DD1+0.001964D0*DSIN(Q)+DD
+      M=GRRAD*(358.475833D0+35999.0498D0*T
+     1 -0.000150D0*T**2-0.0000033D0*T**3
+     2 -0.001778D0*DD1)
+      M1=GRRAD*(296.104608D0+477198.8491D0*T
+     1  +0.009192D0*T**2+0.0000144D0*T**3
+     2  +0.000817D0*DD1+0.002541D0*DSIN(Q)+DD)
+      D=GRRAD*(350.737486D0+445267.1142D0*T
+     1 -0.001436D0*T**2+0.0000019D0*T**3
+     2 +0.002011D0*DD1+0.001964D0*DSIN(Q)+DD)
+      F=GRRAD*(11.250889D0+483202.0251D0*T
+     1 -0.003211D0*T**2-0.0000003D0*T**3
+     2 -0.024691D0*DSIN(Q)-0.004328D0*DSIN(Q
+     3 +GRRAD*(275.05D0-2.3D0*T))+DD)
+      E=1.0D0-0.002495D0*T-0.00000752D0*T**2
+      E2=E**2
+      LAMB=L+6.288750D0*DSIN(M1)
+     1    +1.274018D0*DSIN(2*D-M1)
+     2    +0.658309D0*DSIN(2*D)
+     3    +0.213616D0*DSIN(2*M1)
+     4    -0.185596D0*DSIN(M)*E
+     5    -0.114336D0*DSIN(2*F)
+     6    +0.058793D0*DSIN(2*D-2*M1)
+     7    +0.057212D0*DSIN(2*D-M-M1)*E
+     8    +0.053320D0*DSIN(2*D+M1)
+     9    +0.045874D0*DSIN(2*D-M)*E
+      LAMB=LAMB+0.041024D0*DSIN(M1-M)*E
+     1    -0.034718D0*DSIN(D)
+     2    -0.030465D0*DSIN(M+M1)*E
+     3    +0.015326D0*DSIN(2*D-2*F)
+     4    -0.012528D0*DSIN(2*F+M1)
+     5    -0.010980D0*DSIN(2*F-M1)
+     6    +0.010674D0*DSIN(4*D-M1)
+     7    +0.010034D0*DSIN(3*M1)
+     8    +0.008548D0*DSIN(4*D-2*M1)
+     9    -0.007910D0*DSIN(M-M1+2*D)*E
+      LAMB=LAMB-0.006783D0*DSIN(2*D+M)*E
+     1    +0.005162D0*DSIN(M1-D)
+     2    +0.005000D0*DSIN(M+D)*E
+     3    +0.004049D0*DSIN(M1-M+2*D)*E
+     4    +0.003996D0*DSIN(2*M1+2*D)
+     5    +0.003862D0*DSIN(4*D)
+     6    +0.003665D0*DSIN(2*D-3*M1)
+     7    +0.002695D0*DSIN(2*M1-M)*E
+     8    +0.002602D0*DSIN(M1-2*F-2*D)
+     9    +0.002396D0*DSIN(2*D-M-2*M1)*E
+      LAMB=LAMB-0.002349D0*DSIN(M1+D)
+     1    +0.002249D0*DSIN(2*D-2*M)*E2
+     2    -0.002125D0*DSIN(2*M1+M)*E
+     3    -0.002079D0*DSIN(2*M)*E2
+     4    +0.002059D0*DSIN(2*D-M1-2*M)*E2
+     5    -0.001773D0*DSIN(M1+2*D-2*F)
+     6    -0.001595D0*DSIN(2*F+2*D)
+     7    +0.001220D0*DSIN(4*D-M-M1)*E
+     8    -0.001110D0*DSIN(2*M1+2*F)
+     9    +0.000892D0*DSIN(M1-3*D)
+      LAMB=LAMB-0.000811D0*DSIN(M+M1+2*D)*E
+     1    +0.000761D0*DSIN(4*D-M-2*M1)*E
+     2    +0.000717D0*DSIN(M1-2*M)*E2
+     3    +0.000704D0*DSIN(M1-2*M-2*D)*E2
+     4    +0.000693D0*DSIN(M-2*M1+2*D)*E
+     5    +0.000598D0*DSIN(2*D-M-2*F)*E
+     6    +0.000550D0*DSIN(M1+4*D)
+     7    +0.000538D0*DSIN(4*M1)
+     8    +0.000521D0*DSIN(4*D-M)*E
+     9    +0.000486D0*DSIN(2*M1-D)
+      W1=GRRAD*LAMB
+      LAMB=RADGR*DATAN2(DSIN(W1),DCOS(W1))
+      IF(LAMB.LT.0) LAMB=LAMB+360.0D0
+         B=5.128189D0*DSIN(F)
+     1    +0.280606D0*DSIN(M1+F)
+     2    +0.277693D0*DSIN(M1-F)
+     3    +0.173238D0*DSIN(2*D-F)
+     4    +0.055413D0*DSIN(2*D+F-M1)
+     5    +0.046272D0*DSIN(2*D-F-M1)
+     6    +0.032573D0*DSIN(2*D+F)
+     7    +0.017198D0*DSIN(2*M1+F)
+     8    +0.009267D0*DSIN(2*D+M1-F)
+     9    +0.008823D0*DSIN(2*M1-F)
+       B=B+0.008247D0*DSIN(2*D-M-F)*E
+     1    +0.004323D0*DSIN(2*D-F-2*M1)
+     2    +0.004200D0*DSIN(2*D+F+M1)
+     3    +0.003372D0*DSIN(F-M-2*D)*E
+     4    +0.002472D0*DSIN(2*D+F-M-M1)*E
+     5    +0.002222D0*DSIN(2*D+F-M)*E
+     6    +0.002072D0*DSIN(2*D-F-M-M1)*E
+     7    +0.001877D0*DSIN(F-M+M1)*E
+     8    +0.001828D0*DSIN(4*D-F-M1)
+     9    -0.001803D0*DSIN(F+M)*E
+       B=B-0.001750D0*DSIN(3*F)
+     1    +0.001570D0*DSIN(M1-M-F)*E
+     2    -0.001487D0*DSIN(F+D)
+     3    -0.001481D0*DSIN(F+M+M1)*E
+     4    +0.001417D0*DSIN(F-M-M1)*E
+     5    +0.001350D0*DSIN(F-M)*E
+     6    +0.001330D0*DSIN(F-D)
+     7    +0.001106D0*DSIN(F+3*M1)
+     8    +0.001020D0*DSIN(4*D-F)
+     9    +0.000833D0*DSIN(F+4*D-M1)
+       B=B+0.000781D0*DSIN(M1-3*F)
+     1    +0.000670D0*DSIN(F+4*D-2*M1)
+     2    +0.000606D0*DSIN(2*D-3*F)
+     3    +0.000597D0*DSIN(2*D+2*M1-F)
+     4    +0.000492D0*DSIN(2*D+M1-M-F)*E
+     5    +0.000450D0*DSIN(2*M1-F-2*D)
+     6    +0.000439D0*DSIN(3*M1-F)
+     7    +0.000423D0*DSIN(F+2*D+2*M1)
+     8    +0.000422D0*DSIN(2*D-F-3*M1)
+     9    -0.000367D0*DSIN(M+F+2*D-M1)*E
+       B=B-0.000353D0*DSIN(M+F+2*D)*E
+     1    +0.000331D0*DSIN(F+4*D)
+     2    +0.000317D0*DSIN(2*D+F-M+M1)*E
+     3    +0.000306D0*DSIN(2*D-2*M-F)*E2
+     4    -0.000283D0*DSIN(M1+3*F)
+      W1=0.0004664D0*DCOS(Q)
+      W2=0.0000754D0*DCOS(Q+GRRAD*(275.05D0-2.3D0*T))
+      BET=B*(1.0D0-W1-W2)
+      PAR=0.950724D0+0.051818*DCOS(M1)
+     1    +0.009531D0*DCOS(2*D-M1)
+     2    +0.007843D0*DCOS(2*D)
+     3    +0.002824D0*DCOS(2*M1)
+     4    +0.000857D0*DCOS(2*D+M1)
+     5    +0.000533D0*DCOS(2*D-M)*E
+     6    +0.000401D0*DCOS(2*D-M-M1)*E
+     7    +0.000320D0*DCOS(M1-M)*E
+     8    -0.000271D0*DCOS(D)
+     9    -0.000264D0*DCOS(M+M1)*E
+      PAR=PAR-0.000198D0*DCOS(2*F-M1)
+     1    +0.000173D0*DCOS(3*M1)
+     2    +0.000167D0*DCOS(4*D-M1)
+     3    -0.000111D0*DCOS(M)*E
+     4    +0.000103D0*DCOS(4*D-2*M1)
+     5    -0.000084D0*DCOS(2*M1-2*D)
+     6    -0.000083D0*DCOS(2*D+M)*E
+     7    +0.000079D0*DCOS(2*D+2*M1)
+     8    +0.000072D0*DCOS(4*D)
+     9    +0.000064D0*DCOS(2*D-M+M1)*E
+      PAR=PAR-0.000063D0*DCOS(2*D+M-M1)*E
+     1    +0.000041D0*DCOS(M+D)*E
+     2    +0.000035D0*DCOS(2*M1-M)*E
+     3    -0.000033D0*DCOS(3*M1-2*D)
+     4    -0.000030D0*DCOS(M1+D)
+     5    -0.000029D0*DCOS(2*F-2*D)
+     6    -0.000029D0*DCOS(2*M1+M)*E
+     7    +0.000026D0*DCOS(2*D-2*M)*E2
+     8    -0.000023D0*DCOS(2*F-2*D+M1)
+     9    +0.000019D0*DCOS(4*D-M-M1)*E
+      EP=23.452294D0-0.0130125D0*T-0.00000164D0*T**2
+     1  +0.000000503D0*T**3
+      SB=DSIN(LAMB*GRRAD)*DCOS(EP*GRRAD)-DTAN(BET*GRRAD)
+     1  *DSIN(EP*GRRAD)
+      CB=DCOS(LAMB*GRRAD)
+      ALF=RADGR*DATAN2(SB,CB)
+      IF(ALF.LT.0) ALF=ALF+360.0D0
+      SB=DSIN(BET*GRRAD)*DCOS(EP*GRRAD)+DCOS(BET*GRRAD)
+     1  *DSIN(EP*GRRAD)*DSIN(LAMB*GRRAD)
+      CB=DSQRT(1.0D0-SB**2)
+      BI=RADGR*DATAN2(SB,CB)
+      DC=180.0D0-RADGR*D-6.289D0*DSIN(M1)
+     1  +2.100D0*DSIN(M)-1.274D0*DSIN(2*D-M1)-0.658D0*DSIN(2*D)
+     2  -0.214D0*DSIN(2*M1)-0.112D0*DSIN(D)
+      FAZ=SNGL(1.0D0+DCOS(DC*GRRAD))/2.0
+      R=1.0/SNGL(DSIN(PAR*GRRAD))
+      RETURN
+      END
+      REAL FUNCTION RMODUL(X)
+C******************************************
+C  ‚›—ˆ‘‹…ˆ… ŒŽ„“‹Ÿ ’…•Œ…ŽƒŽ ‚…Š’Ž€  *
+C******************************************
+      REAL*4 X(3)
+      RMODUL=SQRT(X(1)**2+X(2)**2+X(3)**2)
+      RETURN
+      END
+      SUBROUTINE KOREN4(A,B,C,D,E,X1,X2,X3,X4)
+C*******************************************************
+C  …˜…ˆ… “€‚…ˆŸ 4-‰ ‘’……ˆ ‚ €„ˆŠ€‹€•           *
+C  “€‚…ˆ… ‚ˆ„€: A*X**4 + B*X**3 + C*X**2 + D*X + E=0*
+C     ‚•Ž„: A,B,C,D,E - ŠŽ””ˆ–ˆ…’› “€‚…ˆŸ         *
+C     ‚›•Ž„: X1(1),X2(1),X3(1),X4(1) - ŠŽˆ           *
+C            …‘‹ˆ XN(2) = 0 - ŠŽ…œ „…‰‘’‚ˆ’…‹œ›‰    *
+C            …‘‹ˆ XN(2) =-1 - ŠŽ…œ ŠŽŒ‹…Š‘›‰       *
+C    / €‘‘—ˆ’›‚€…’ ’Ž‹œŠŽ „…‰‘’‚ˆ’…‹œ›… ŠŽˆ      *
+C*******************************************************
+      REAL*4 X1(2),X2(2),X3(2),X4(2)
+	  X4( 2 ) = 0.0
+      B1=B/A
+      C1=C/A
+      D1=D/A
+      E1=E/A
+      H=-B1/4.0
+      P=6.0*H**2+3.0*B1*H+C1
+      Q=4.0*H**3+3.0*B1*H**2+2.0*C1*H+D1
+      R=H**4+B1*H**3+C1*H**2+D1*H+E1
+      B1=2.0*P
+      C1=P**2-4.0*R
+      D1=-Q**2
+      CALL KOREN3(1.0,B1,C1,D1,X1,X2,X3)
+       IF(X1(2).EQ.-1.0) X1(1)=-1.0E+10
+       IF(X2(2).EQ.-1.0) X2(1)=-1.0E+10
+       IF(X3(2).EQ.-1.0) X3(1)=-1.0E+10
+      RD=AMAX1(X1(1),X2(1),X3(1))
+      X1(2)=0.0
+      X2(2)=0.0
+      X3(2)=0.0
+      SRD=SQRT(RD)
+      CSI=(P+RD-Q/SRD)/2.0
+      BET=(P+RD+Q/SRD)/2.0
+      CALL KOREN2(1.0,SRD,CSI,X1,X2)
+      CALL KOREN2(1.0,-SRD,BET,X3,X4)
+      X1(1)=X1(1)+H
+      X2(1)=X2(1)+H
+      X3(1)=X3(1)+H
+      X4(1)=X4(1)+H
+      RETURN
+      END
+      SUBROUTINE KOREN3(A,B,C,D,X1,X2,X3)
+C*******************************************************
+C  …˜…ˆ… “€‚…ˆŸ 3-‰ ‘’……ˆ ‚ €„ˆŠ€‹€•           *
+C  “€‚…ˆ… ‚ˆ„€:  €*X**3 + B*X**2 + C*X + D = 0      *
+C     ‚•Ž„: A,B,C,D  -  ŠŽ””ˆ–ˆ…’› “€‚…ˆŸ         *
+C     ‚›•Ž„: X1(1),X2(1),X3(1)   -   ŠŽˆ             *
+C            …‘‹ˆ XN(2) = 0 - ŠŽ…œ „…‰‘’‚ˆ’…‹œ›‰    *
+C            …‘‹ˆ XN(2) =-1 - ŠŽ…œ ŠŽŒ‹…Š‘›‰       *
+C    / €‘‘—ˆ’›‚€…’ ’Ž‹œŠŽ „…‰‘’‚ˆ’…‹œ›… ŠŽˆ      *
+C*******************************************************
+      REAL*4 X1(2),X2(2),X3(2)
+	  X1( 2 ) = 0.0
+	  X2( 2 ) = 0.0
+	  X3( 2 ) = 0.0
+      PI=4.0*ATAN(1.0)
+      P=B/A
+      Q=C/A
+      R=D/A
+      AR=(3.0*Q-P**2)/3.0
+      BR=(2.0*P**3-9.0*P*Q+27.0*R)/27.0
+      DEL=(AR/3.0)**3+(BR/2.0)**2
+       IF(DEL.LE.0) GOTO 10
+      X1(1)=SQRT3(-BR/2.0+SQRT(DEL))+SQRT3(-BR/2.0-SQRT(DEL))
+      X2(2)=-1.0
+      X3(2)=-1.0
+10     IF(DEL.NE.0) GOTO 20
+      X1(1)=2.0*SQRT3(-BR/2.0)
+      X2(1)=SQRT3(BR/2.0)
+      X3(1)=X2(1)
+20     IF(DEL.GE.0) GOTO 30
+      COSFI=-BR/(2.0*SQRT(-(AR/3.0)**3))
+      SINFI=SQRT(1.0-COSFI**2)
+      FI=ATAN2(SINFI,COSFI)
+      E0=2.0*SQRT(-AR/3.0)
+      X1(1)=E0*COS(FI/3.0)
+      X2(1)=E0*COS((FI+2.0*PI)/3.0)
+      X3(1)=E0*COS((FI+4.0*PI)/3.0)
+30    X1(1)=X1(1)-P/3.0
+      X2(1)=X2(1)-P/3.0
+      X3(1)=X3(1)-P/3.0
+      RETURN
+      END
+      SUBROUTINE KOREN2(A,B,C,X1,X2)
+C*******************************************************
+C  …˜…ˆ… Š‚€„€’ŽƒŽ “€‚…ˆŸ ‚ €„ˆŠ€‹€•           *
+C  “€‚…ˆ… ‚ˆ„€:  A*X**2 + B*X + C = 0               *
+C     ‚•Ž„: A,B,C  -  ŠŽ””ˆ–ˆ…’› “€‚…ˆŸ           *
+C     ‚›•Ž„: X1(1),X2(1)   -   ŠŽˆ                   *
+C            …‘‹ˆ XN(2) = 0 - ŠŽ…œ „…‰‘’‚ˆ’…‹œ›‰    *
+C            …‘‹ˆ XN(2) =-1 - ŠŽ…œ ŠŽŒ‹…Š‘›‰       *
+C    / €‘‘—ˆ’›‚€…’ ’Ž‹œŠŽ „…‰‘’‚ˆ’…‹œ›… ŠŽˆ      *
+C*******************************************************
+      REAL*4 X1(2),X2(2)
+	  X1( 2 ) = 0.0
+	  X2( 2 ) = 0.0
+      D=B**2-4.0*A*C
+      IF(D.GE.0) GOTO 10
+      X1(2)=-1.0
+      X2(2)=-1.0
+10    X1(1)=(-B+SQRT(ABS(D)))/(2.0*A)
+      X2(1)=(-B-SQRT(ABS(D)))/(2.0*A)
+      RETURN
+      END
+      REAL FUNCTION SQRT3(X)
+C*******************************************************
+C  ‚›—ˆ‘‹…ˆ… €ˆ”Œ…’ˆ—…‘ŠŽƒŽ Š“ˆ—…‘ŠŽƒŽ ŠŽŸ        *
+C*******************************************************
+      SQRT3=0.0
+        IF(X.GT.0) SQRT3=EXP(ALOG(X)/3.0)
+        IF(X.LT.0) SQRT3=-EXP(ALOG(ABS(X))/3.0)
+      END
+      REAL FUNCTION DEKOD(X)
+      DEKOD=ALOG10(X)
+      END
+      SUBROUTINE UPOR(A,N,NA)
+C***************************************************
+C  ‘Ž’ˆŽ‚Š€ —ˆ‘‹Ž‚ŽƒŽ Œ€‘‘ˆ‚€ ‚ ŽŸ„Š… “›‚€ˆŸ *
+C   ‚•Ž„:  € - Œ€‘‘ˆ‚ —ˆ‘…‹                        *
+C          N - €‡Œ…Ž‘’œ Œ€‘‘ˆ‚€ €               *
+C   ‚›•Ž„: NA- Œ€‘‘ˆ‚ ŽŒ…Ž‚ ‹…Œ…’Ž‚ Œ€‘‘ˆ‚€ €  *
+C          ’€Šˆ•, —’Ž A(NA(I)) > A(NA(I+1))        *
+C***************************************************
+      REAL*4 A(1)
+      INTEGER*2 NA(1)
+      DO 1 I=1,N
+1     NA(I)=0
+      DO 3 K=1,N
+      XMAX=-1.E+10
+      DO 3 I=1,N
+      DO 2 J=1,N
+      IF(NA(J).EQ.I) GOTO 3
+2     CONTINUE
+      IF(A(I).LE.XMAX) GOTO 3
+      XMAX=A(I)
+      NA(K)=I
+3     CONTINUE
+      RETURN
+      END
+      SUBROUTINE MAXKIN(H,HM,G,IG,PUPR)
+*****************************************************************
+*    ‚•Ž„:                                                      *
+*   H-   ‚…Š’Ž ’…Š“™…ƒŽ ŠˆŒŽŒ…’€                             *
+*   G-   Œ€‘‘˜’€›‰ ŠŽ””ˆ–ˆ…’( 0.9 ˆ‹ˆ 0.75)                 *
+*   IG-  ŠŽ‹ˆ—…‘’‚Ž ˆ‘€‚›• ƒˆŽ„ˆŽ‚ ‚ ŠŽŒ‹…Š’…             *
+*    ‚›•Ž„:                                                     *
+*   Œ-  ‚…Š’Ž Œ€Š‘ˆŒ€‹œŽƒŽ ŠˆŒŽŒ…’€                        *
+*   PUPR-ˆ‡€Š “€‚‹Ÿ…ŒŽ‘’ˆ( 0-‚…Š’Ž ‚ ‡Ž…, 1-‚›˜…‹ ˆ‡ ‡Ž›*
+*****************************************************************
+      PARAMETER (GG=1100.0)
+      REAL*4 H(3),HM(3),G,K
+      INTEGER*2 IG,PUPR
+      K=ABS(H(1))/SQRT(H(2)**2+H(3)**2+0.001)
+      IF(IG.EQ.6) THEN
+         IF(K.LE.0.492) THEN
+           HMAX=GG*G*(2.25+SQRT(5.06+1.19*(1+K**2)))/SQRT(1+K**2)
+         ELSE
+           HMAX=GG*G*(0.98+1.59*K+SQRT(7.87*K**2+3.12*K+6.3))
+     *     /SQRT(1+K**2)
+         END IF
+      ELSE
+         IF(K.LE.0.711) THEN
+           HMAX=GG*G*(1.15+SQRT(1.32+4.93*(1+K**2)))/SQRT(1+K**2)
+         ELSE
+           HMAX=GG*G*(1.92*K+SQRT(6.15*K**2+2.46))/SQRT(1+K**2)
+         END IF
+      END IF
+      HT=SQRT(H(1)**2+H(2)**2+H(3)**2)
+      HM(1)=H(1)*HMAX/(HT+0.001)
+      HM(2)=H(2)*HMAX/(HT+0.001)
+      HM(3)=H(3)*HMAX/(HT+0.001)
+      PUPR=0
+      IF(HMAX.LE.HT) PUPR=1
+      RETURN
+      END
+      SUBROUTINE VIDIST(JD0,JD,ALF0,DEL0,AS,DS,ALF,DEL)
+C************************************************************
+C  ‚›—ˆ‘‹Ÿ…’‘Ÿ ‚ˆ„ˆŒŽ… Ž‹Ž†…ˆ… ˆ‘’Ž—ˆŠ€ € ‘’€„€’“ž   *
+C  „€’“ ˆ‘•Ž„Ÿ ˆ‡ …ƒŽ ‘…„…ƒŽ Ž‹Ž†…ˆŸ € €—€‹œ“ž „€’“  *
+C        ‘ “—…’ŽŒ:  ‘Ž‘’‚…ŽƒŽ „‚ˆ†…ˆŸ,                  *
+C           …–…‘‘ˆˆ, “’€–ˆˆ ˆ €…€–ˆˆ                   *
+C-----------------------------------------------------------*
+C       ‚•Ž„:                                               *
+C  JD0 - €—€‹œ€Ÿ ž‹ˆ€‘Š€Ÿ „€’€                           *
+C  JD  - ‘’€„€’€Ÿ ž‹ˆ€‘Š€Ÿ „€’€                         *
+C  ALF0- €—€‹œŽ… ŸŒŽ… ‚Ž‘•Ž†„…ˆ… ˆ‘’Ž—ˆŠ€ (ƒ€„)      *
+C  DEL0- €—€‹œŽ… ‘Š‹Ž…ˆ… ˆ‘’Ž—ˆŠ€ (ƒ€„)               *
+C  AS  - ‘Ž‘’‚…Ž… „‚ˆ†…ˆ… Ž €‹”€ (‘…Š.„“ƒˆ/ƒŽ„)        *
+C  DS  - ‘Ž‘’‚…Ž… „‚ˆ†…ˆ… Ž „…‹œ’€ (‘…Š.„“ƒˆ/ƒŽ„)      *
+C       ‚›•Ž„:                                              *
+C  ALF - ŠŽ…—Ž… ŸŒŽ… ‚Ž‘•Ž†„…ˆ… ˆ‘’Ž—ˆŠ€ (ƒ€„)       *
+C  DEL - ŠŽ…—Ž… ‘Š‹Ž…ˆ… ˆ‘’Ž—ˆŠ€ (ƒ€„)                *
+C************************************************************
+      DOUBLE PRECISION JD0,JD,T0,T,X1,X2,X3,PI,TT,
+     1                 DALF0,DDEL0,DAS,DDS,A,B,C,EP,
+     2                 DALF,DDEL,L,L1,M,M1,Q,DP,DE,V
+      REAL*4 AS,DS,ALF0,DEL0,ALF,DEL
+      PI=4.0D0*DATAN(1.0D0)
+      TT=(JD-JD0)/365.25D0
+      DAS=PI*15.0D0*DBLE(AS)*TT/3600.0D0/180.0D0
+      DDS=PI*DBLE(DS)*TT/3600.0D0/180.0D0
+      DALF0=PI*DBLE(ALF0)/180.0D0+DAS
+      DDEL0=PI*DBLE(DEL0)/180.0D0+DDS
+      T0=(JD0-2415020.313D0)/36524.2199D0
+      T=(JD-JD0)/36524.2199D0
+      X1=PI*(((2304.250D0+1.396D0*T0)*T+0.302D0*T**2
+     1  +0.018D0*T**3)/3600.0D0)/180.0D0
+      X2=PI*((180.0D0*3600.0D0*X1/PI+0.791D0*T**2+0.001D0*T**3)
+     1  /3600.0D0)/180.0D0
+      X3=PI*(((2004.682D0-0.853D0*T0)*T-0.426D0*T**2
+     1  -0.042D0*T**3)/3600.0D0)/180.0D0
+      A=DCOS(DDEL0)*DSIN(DALF0+X1)
+      B=DCOS(X3)*DCOS(DDEL0)*DCOS(DALF0+X1)-DSIN(X3)*DSIN(DDEL0)
+      C=DSIN(X3)*DCOS(DDEL0)*DCOS(DALF0+X1)+DCOS(X3)*DSIN(DDEL0)
+      DALF=DATAN2(A,B)+X2
+      IF(DALF.LT.0.0D0) DALF=DALF+2.0D0*PI
+      DDEL=DASIN(C)
+      TT=(JD-2415020.0D0)/36525.0D0
+      L=PI*(279.69688D0+36000.76892D0*TT+0.0003025D0*TT**2)/180.0D0
+      M=PI*(358.47583D0+35999.04975D0*TT-0.000150D0*TT**2
+     1      -0.0000033D0*T**3)/180.0D0
+      L1=PI*(270.434164D0+481267.8831D0*TT-0.001133D0*TT**2
+     1      +0.0000019D0*TT**3)/180.0D0
+      M1=PI*(296.104608D0+477198.8491D0*TT+0.009192D0*TT**2
+     1      +0.0000144D0*TT**3)/180.0D0
+      Q=PI*(259.183275D0-1934.1420D0*TT+0.002078D0*TT**2
+     1      +0.0000022D0*TT**3)/180.0D0
+      DP=-PI*((17.2327D0+0.01737D0*TT)*DSIN(Q)
+     1   -(1.2729D0+0.00013D0*TT)*DSIN(2*L)+0.2088D0*DSIN(2*Q)
+     2   -0.2037D0*DSIN(2*L1)+(0.1261D0-0.00031D0*TT)*DSIN(M)
+     3   +0.0675D0*DSIN(M1)-(0.0497D0-0.00012D0*TT)*DSIN(2*L+M)
+     4   -0.0342D0*DSIN(2*L1-Q)-0.0261D0*DSIN(2*L1+M1)
+     5   +0.0214D0*DSIN(2*L-M)-0.0149D0*DSIN(2*L-2*L1+M1)
+     6   +0.0124D0*DSIN(2*L-Q)+0.0114D0*DSIN(2*L1-M1))
+     7   /3600.0D0/180.0D0
+      DE=PI*((9.21D0+0.00091D0*TT)*DCOS(Q)
+     1   +(0.5522D0-0.00029D0*TT)*DCOS(2*L)-0.0904D0*DCOS(2*Q)
+     2   +0.0884D0*DCOS(2*L1)+0.0216D0*DCOS(2*L+M)
+     3   +0.0183D0*DCOS(2*L1-Q)+0.0113D0*DCOS(2*L1+M1)
+     4   -0.0093D0*DCOS(2*L-M)-0.0066D0*DCOS(2*L-Q))
+     5   /3600.0D0/180.0D0
+      EP=PI*(23.452294D0-0.0130125D0*TT-0.00000164D0*TT**2
+     1   +0.000000503D0*TT**3)/180.0D0
+      DAS=DP*(DCOS(EP)+DSIN(EP)*DSIN(DALF)*DTAN(DDEL))-
+     1        DE*DCOS(DALF)*DTAN(DDEL)
+      DDS=DP*DSIN(EP)*DCOS(DALF)+DE*DSIN(DALF)
+      DALF=DALF+DAS
+      DDEL=DDEL+DDS
+      V=L+PI*((1.91946D0-0.004789D0*TT-0.000014D0*TT**2)*DSIN(M)
+     1   +(0.020094D0-0.0001D0*TT)*DSIN(2*M)
+     2   +0.000293D0*DSIN(3*M))/180.0D0
+      DAS=PI*(-20.49D0*(DCOS(DALF)*DCOS(V)*DCOS(EP)
+     1    +DSIN(DALF)*DSIN(V))/DCOS(DDEL))/3600.0D0/180.0D0
+      DDS=PI*(-20.49D0*(DCOS(V)*DCOS(EP)*(DTAN(EP)*DCOS(DDEL)
+     1   -DSIN(DALF)*DSIN(DDEL))+DCOS(DALF)*DSIN(DDEL)*DSIN(V)))
+     2   /3600.0D0/180.0D0
+*      TYPE*,3600.0D0*180.0D0*DDS/PI
+      DDEL=DDEL+DDS
+      ALF=180.0D0*SNGL(DALF)/PI
+      DEL=180.0D0*SNGL(DDEL)/PI
+      RETURN
+      END
