@@ -20,7 +20,7 @@
             TEXT(71:80)='IST: '
        !     WRITE(*,'(''  one or two '')')
         !    READ(*,*) LN
-            LN=2
+            LN=1
             WRITE(*,'('' ДАТA И ВРЕМЯ?'')')
             READ(*,*) T
             CALL DATAJD(T(1),T(2),T(3),T(4),T(5),T(6),JD)
