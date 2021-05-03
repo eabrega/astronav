@@ -94,7 +94,7 @@
         !   SHR00=55.9
             DGT=PI0*DGT00/180.0
             SHR=PI0*SHR00/180.0
-            IFLAG=0
+            IFLAG=1
             CALL DATAJD(T(1),T(2),T(3),0,0,0,JD0)
             JDKON=JD+DEN
       DO WHILE(JD.LE.JDKON)
