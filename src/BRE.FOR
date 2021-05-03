@@ -18,7 +18,7 @@
             TEXT(51:60)='MOON:     '
             TEXT(61:70)='SUN:   '
             TEXT(71:80)='IST: '
-            WRITE(*,'(''  НОМЕР ИСТОЧНИКА'')')
+            WRITE(*,'(''  one or two '')')
             READ(*,*) LN
             WRITE(*,'('' ДАТA И ВРЕМЯ?'')')
             READ(*,*) T
