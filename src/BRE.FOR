@@ -108,8 +108,8 @@
             JD=JD+DZ*5.0D0/864.0D0
             IF(ALF.LT.0) ALF=ALF+2.0D0*PI
             IF(IFLAG.EQ.0) THEN
-   !         WRITE(LN,'(5X,''ДАТА: '',3I4)') T(1),T(2),T(3)
-    !      WRITE(LN,*) 180.0*DGT/PI0,180.0*SHR/PI0
+   !        WRITE(LN,'(5X,''ДАТА: '',3I4)') T(1),T(2),T(3)
+   !        WRITE(LN,*) 180.0*DGT/PI0,180.0*SHR/PI0
             CALL GRADUS(SNGL(180.0D0*ALF/PI)/15.0,ICD(1),ICD(2),ICD(3))
             CALL GRADUS(SNGL(180.0D0*DEL/PI),ICD(4),ICD(5),ICD(6))
             WRITE(LN,101) TEXT(1:10),ICD,2*DSP,DSE
@@ -121,7 +121,7 @@
             U(11)=180.0*ATAN(SINH/SQRT(1.0-SINH**2))/PI0
             IF(II(1).EQ.1.AND.IFLAG.NE.0) WRITE(*,*)
      *IT(4:4),TEXT(1:10),T(4),T(5),T(6),A(11),U(11)
-            IF(U(11)*U(1).LT.0.AND.A(11).LT.180.0) WRITE(*,100)
+            IF(U(11)*U(1).LT.0.AND.A(11).LT.180.0) WRITE(LN,100)
      *IT(1:1),TEXT(1:10),T(4),T(5),T(6),A(11),U(11)
             IF(U(11)*U(1).LT.0.AND.A(11).GT.180.0) WRITE(*,100)
      *IT(2:2),TEXT(1:10),T(4),T(5),T(6),A(11),U(11)
