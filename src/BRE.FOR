@@ -43,51 +43,51 @@
             IF(BUFER(I:I).EQ.'7') II(7)=7
             IF(BUFER(I:I).EQ.'8') II(8)=8
             ENDDO
-            WRITE(*,'(''  НОМЕР ИСТОЧНИКА'')')
-            READ(*,'(A5)') ISTOK
-            OPEN(1,FILE='BREGA.DAT',STATUS='OLD')
-            CALL DATAJD(1986,7,1,0,0,0,JD00)
-            OPEN(2,FILE='IST.KAT',STATUS='OLD')
-      I=0
-      DO WHILE(ISTOK(1:3).NE.BUFER(1:3).AND.I.LT.346)
-      I=I+1
-            READ(2,'(A70)') BUFER
-      ENDDO
-            IF(I.LT.346) THEN
-            READ(BUFER(19:70),'(6(I3),F5.2,F7.4,F6.3)') ICD,ZV,AS,DS
-            CI1=(FLOAT(ICD(1))+FLOAT(ICD(2))/60.0
-     *        +FLOAT(ICD(3))/3600.0)*15.0
-            CI2=FLOAT(IABS(ICD(4)))+FLOAT(ICD(5))/60.0
-     *        +FLOAT(ICD(6))/3600.0
-            IF(ICD(4).LT.0) CI2=-CI2
-            CALL VIDIST(JD00,JD,CI1,CI2,AS,DS,CI1,CI2)
-            CALL GRADUS(CI1/15.0,ICD(1),ICD(2),ICD(3))
-            CALL GRADUS(CI2,ICD(4),ICD(5),ICD(6))
-            WRITE(LN,'(''ВЫБРАН/
-     * ИСТОЧНИК:  '',A18,A12)')
-     *            BUFER(1:18),BUFER(55:66)
-            WRITE(LN,'(''ЗВЕЗДНАЯ ВЕЛИЧИНА : '',F5.2)') ZV
-            WRITE(LN,'(''ВХ. A='',3(I3),'' СК D='',3(I3))') ICD
-            CLOSE(2)
-      ELSE
-            CLOSE(2)
-            WRITE(*,'('' КООРДИНАТЫ ИСТОЧНИКА?'')')
-      WRITE(*,'('' ВОСХОЖДЕНИЕ (ЧАС,  МИН, СЕК)'')')
-      WRITE(*,'('' СКЛОНЕНИЕ   (ГРАД, МИН, СЕК)'')')
-          READ(*,*) ICD
-          CI1=(FLOAT(ICD(1))+FLOAT(ICD(2))/60.0
-     *        +FLOAT(ICD(3))/3600.0)*15.0
-          CI2=FLOAT(IABS(ICD(4)))+FLOAT(IABS(ICD(5)))/60.0
-     *        +FLOAT(IABS(ICD(6)))/3600.0
-          IF(ICD(4).LT.0) CI2=-CI2
-          WRITE(LN,'(''       ВЫБРАН ИСТОЧНИК:'')')
-          WRITE(LN,'('' ВОСХ. A='',3(I3),''СКЛОН. D='',3(I3))') ICD
-      ENDIF
-            IF(DSHAG.GT.3600) DSHAG=3600.0
-            IF(DSHAG.LT.1) DSHAG=1.0
-            WRITE(*,'('' ВВЕДИТЕ КОРДИНАТЫ''/
-     * '' ДОЛГОТА (ГРАД), ШИРОТА (ГРАД)'')')
-         READ(*,*) DGT00,SHR00
+ !           WRITE(*,'(''  НОМЕР ИСТОЧНИКА'')')
+ !           READ(*,'(A5)') ISTOK
+ !           OPEN(1,FILE='BREGA.DAT',STATUS='OLD')
+ !           CALL DATAJD(1986,7,1,0,0,0,JD00)
+ !           OPEN(2,FILE='IST.KAT',STATUS='OLD')
+ !     I=0
+ !     DO WHILE(ISTOK(1:3).NE.BUFER(1:3).AND.I.LT.346)
+ !     I=I+1
+ !           READ(2,'(A70)') BUFER
+ !     ENDDO
+ !           IF(I.LT.346) THEN
+ !           READ(BUFER(19:70),'(6(I3),F5.2,F7.4,F6.3)') ICD,ZV,AS,DS
+ !           CI1=(FLOAT(ICD(1))+FLOAT(ICD(2))/60.0
+ !    *        +FLOAT(ICD(3))/3600.0)*15.0
+ !           CI2=FLOAT(IABS(ICD(4)))+FLOAT(ICD(5))/60.0
+ !    *        +FLOAT(ICD(6))/3600.0
+ !           IF(ICD(4).LT.0) CI2=-CI2
+ !           CALL VIDIST(JD00,JD,CI1,CI2,AS,DS,CI1,CI2)
+ !           CALL GRADUS(CI1/15.0,ICD(1),ICD(2),ICD(3))
+ !           CALL GRADUS(CI2,ICD(4),ICD(5),ICD(6))
+ !           WRITE(LN,'(''ВЫБРАН/
+ !    * ИСТОЧНИК:  '',A18,A12)')
+ !    *            BUFER(1:18),BUFER(55:66)
+ !           WRITE(LN,'(''ЗВЕЗДНАЯ ВЕЛИЧИНА : '',F5.2)') ZV
+ !           WRITE(LN,'(''ВХ. A='',3(I3),'' СК D='',3(I3))') ICD
+ !           CLOSE(2)
+ !     ELSE
+ !           CLOSE(2)
+ !           WRITE(*,'('' КООРДИНАТЫ ИСТОЧНИКА?'')')
+ !     WRITE(*,'('' ВОСХОЖДЕНИЕ (ЧАС,  МИН, СЕК)'')')
+ !     WRITE(*,'('' СКЛОНЕНИЕ   (ГРАД, МИН, СЕК)'')')
+ !         READ(*,*) ICD
+ !         CI1=(FLOAT(ICD(1))+FLOAT(ICD(2))/60.0
+ !    *        +FLOAT(ICD(3))/3600.0)*15.0
+ !         CI2=FLOAT(IABS(ICD(4)))+FLOAT(IABS(ICD(5)))/60.0
+ !    *        +FLOAT(IABS(ICD(6)))/3600.0
+ !         IF(ICD(4).LT.0) CI2=-CI2
+ !         WRITE(LN,'(''       ВЫБРАН ИСТОЧНИК:'')')
+ !         WRITE(LN,'('' ВОСХ. A='',3(I3),''СКЛОН. D='',3(I3))') ICD
+ !     ENDIF
+ !           IF(DSHAG.GT.3600) DSHAG=3600.0
+ !           IF(DSHAG.LT.1) DSHAG=1.0
+ !           WRITE(*,'('' ВВЕДИТЕ КОРДИНАТЫ''/
+ !    * '' ДОЛГОТА (ГРАД), ШИРОТА (ГРАД)'')')
+ !        READ(*,*) DGT00,SHR00
 100      FORMAT(1X,A1,A10,' T=',3I3,' A=',F6.2,' H=',F6.2)
 101      FORMAT(2X,A10,' ALF=',3I3,' DEL=',3I3,' D=',F6.2,' F=',F5.2)
         !   DGT00=37.8
