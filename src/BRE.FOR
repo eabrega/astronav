@@ -108,7 +108,7 @@
             IF(ALF.LT.0) ALF=ALF+2.0D0*PI
             IF(IFLAG.EQ.0) THEN
    !         WRITE(LN,'(5X,''ДАТА: '',3I4)') T(1),T(2),T(3)
-          WRITE(LN,*) 180.0*DGT/PI0,180.0*SHR/PI0
+    !      WRITE(LN,*) 180.0*DGT/PI0,180.0*SHR/PI0
             CALL GRADUS(SNGL(180.0D0*ALF/PI)/15.0,ICD(1),ICD(2),ICD(3))
             CALL GRADUS(SNGL(180.0D0*DEL/PI),ICD(4),ICD(5),ICD(6))
             WRITE(LN,101) TEXT(1:10),ICD,2*DSP,DSE
