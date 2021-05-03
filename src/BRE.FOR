@@ -18,8 +18,7 @@
             TEXT(51:60)='MOON:     '
             TEXT(61:70)='SUN:   '
             TEXT(71:80)='IST: '
-            WRITE(*,'(" РЕЖИМ ВЫВОДА?/
-     *(0-ЭКРАН,1-ФАЙЛ BREGA.DAT")')
+            WRITE(*,'0/1')
             READ(*,*) LN
             WRITE(*,'('' ДАТA И ВРЕМЯ?'')')
             READ(*,*) T
