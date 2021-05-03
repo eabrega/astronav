@@ -3,7 +3,7 @@
      *DZ,DEN,R,S(3),V,E,EP,JT,PI,Q0,Q
             REAL*4 A(20),U(20),X
             INTEGER*4 T(6),ICD(6),II(8)
-            CHARACTER ISTOK*5,BUFER*70,TEXT*80,IT*5,LN*1
+            CHARACTER ISTOK*5,BUFER*70,TEXT*80,IT*5
             PI=4.0D0*DATAN(1.0D0)
             PI0=SNGL(PI)
             IT(1:1)='+'
@@ -20,7 +20,7 @@
             TEXT(71:80)='IST: '
        !     WRITE(*,'(''  one or two '')')
         !    READ(*,*) LN
-            LN(1:1)='*'
+            LN=0
             WRITE(*,'('' ДАТA И ВРЕМЯ?'')')
             READ(*,*) T
             CALL DATAJD(T(1),T(2),T(3),T(4),T(5),T(6),JD)
@@ -119,14 +119,14 @@
      *TAN(SNGL(DEL))*COS(SHR))))/PI0
             SINH=SIN(SHR)*SIN(SNGL(DEL))+COS(SHR)*COS(SNGL(DEL))*COS(H)
             U(11)=180.0*ATAN(SINH/SQRT(1.0-SINH**2))/PI0
-            IF(II(1).EQ.1.AND.IFLAG.NE.0) WRITE(LN,100)
+            IF(II(1).EQ.1.AND.IFLAG.NE.0) WRITE(*,100)
      *IT(4:4),TEXT(1:10),T(4),T(5),T(6),A(11),U(11)
-            IF(U(11)*U(1).LT.0.AND.A(11).LT.180.0) WRITE(LN,100)
+            IF(U(11)*U(1).LT.0.AND.A(11).LT.180.0) WRITE(*,100)
      *IT(1:1),TEXT(1:10),T(4),T(5),T(6),A(11),U(11)
-            IF(U(11)*U(1).LT.0.AND.A(11).GT.180.0) WRITE(LN,100)
+            IF(U(11)*U(1).LT.0.AND.A(11).GT.180.0) WRITE(*,100)
      *IT(2:2),TEXT(1:10),T(4),T(5),T(6),A(11),U(11)
             IF(A(11).GT.180.0.AND.A(1).LT.180.0.AND.A(1).NE.0) 
-     * WRITE(LN,100)
+     * WRITE(*,100)
      *IT(3:3),TEXT(1:10),T(4),T(5),T(6),A(11),U(11)
             U(1)=U(11)
             A(1)=A(11)
