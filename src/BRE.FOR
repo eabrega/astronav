@@ -18,8 +18,9 @@
             TEXT(51:60)='MOON:     '
             TEXT(61:70)='SUN:   '
             TEXT(71:80)='IST: '
-            WRITE(*,'(''  one or two '')')
-            READ(*,*) LN
+       !     WRITE(*,'(''  one or two '')')
+        !    READ(*,*) LN
+            LN=2
             WRITE(*,'('' ДАТA И ВРЕМЯ?'')')
             READ(*,*) T
             CALL DATAJD(T(1),T(2),T(3),T(4),T(5),T(6),JD)
@@ -45,7 +46,7 @@
             ENDDO
             WRITE(*,'(''  НОМЕР ИСТОЧНИКА'')')
             READ(*,'(A5)') ISTOK
-            OPEN(1,FILE='BREGA.DAT',STATUS='OLD')
+  !          OPEN(1,FILE='BREGA.DAT',STATUS='OLD')
             CALL DATAJD(1986,7,1,0,0,0,JD00)
             OPEN(2,FILE='IST.KAT',STATUS='OLD')
  !     I=0
@@ -120,7 +121,7 @@
             U(11)=180.0*ATAN(SINH/SQRT(1.0-SINH**2))/PI0
             IF(II(1).EQ.1.AND.IFLAG.NE.0) WRITE(LN,100)
      *IT(4:4),TEXT(1:10),T(4),T(5),T(6),A(11),U(11)
-            IF(U(11)*U(1).LT.0.AND.A(11).LT.180.0) WRITE(2,(LN,100))
+            IF(U(11)*U(1).LT.0.AND.A(11).LT.180.0) WRITE(LN,100)
      *IT(1:1),TEXT(1:10),T(4),T(5),T(6),A(11),U(11)
             IF(U(11)*U(1).LT.0.AND.A(11).GT.180.0) WRITE(LN,100)
      *IT(2:2),TEXT(1:10),T(4),T(5),T(6),A(11),U(11)
