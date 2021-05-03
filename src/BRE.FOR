@@ -43,11 +43,11 @@
             IF(BUFER(I:I).EQ.'7') II(7)=7
             IF(BUFER(I:I).EQ.'8') II(8)=8
             ENDDO
- !           WRITE(*,'(''  НОМЕР ИСТОЧНИКА'')')
- !           READ(*,'(A5)') ISTOK
- !           OPEN(1,FILE='BREGA.DAT',STATUS='OLD')
- !           CALL DATAJD(1986,7,1,0,0,0,JD00)
- !           OPEN(2,FILE='IST.KAT',STATUS='OLD')
+            WRITE(*,'(''  НОМЕР ИСТОЧНИКА'')')
+            READ(*,'(A5)') ISTOK
+            OPEN(1,FILE='BREGA.DAT',STATUS='OLD')
+            CALL DATAJD(1986,7,1,0,0,0,JD00)
+            OPEN(2,FILE='IST.KAT',STATUS='OLD')
  !     I=0
  !     DO WHILE(ISTOK(1:3).NE.BUFER(1:3).AND.I.LT.346)
  !     I=I+1
