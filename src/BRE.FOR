@@ -289,6 +289,7 @@
             CALL GRADUS(180.0*DEL0/PI0,ICD(4),ICD(5),ICD(6))
             WRITE(LN,101) TEXT(61:70),ICD,32.5,1.0
             WRITE(LN,'(''******************************************'')')
+            IFLAG=1
             ENDIF
             H=SNGL(Q)+DGT-ALF0
             A(17)=180.0*(PI0+ATAN2(SIN(H),(COS(H)*SIN(SHR)-
