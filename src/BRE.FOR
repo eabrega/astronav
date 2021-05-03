@@ -63,7 +63,7 @@
             CALL VIDIST(JD00,JD,CI1,CI2,AS,DS,CI1,CI2)
             CALL GRADUS(CI1/15.0,ICD(1),ICD(2),ICD(3))
             CALL GRADUS(CI2,ICD(4),ICD(5),ICD(6))
-            WRITE(LN,'(''       ВЫБРАН/
+            WRITE(LN,'(''ВЫБРАН/
      * ИСТОЧНИК:  '',A18,A12)')
      *            BUFER(1:18),BUFER(55:66)
             WRITE(LN,'(''ЗВЕЗДНАЯ ВЕЛИЧИНА : '',F5.2)') ZV
@@ -81,8 +81,7 @@
      *        +FLOAT(IABS(ICD(6)))/3600.0
           IF(ICD(4).LT.0) CI2=-CI2
           WRITE(LN,'(''       ВЫБРАН ИСТОЧНИК:'')')
-          WRITE(LN,'('' ВОСХ. A='',3(I3),''/
-     *СКЛОН. D='',3(I3))') ICD
+          WRITE(LN,'('' ВОСХ. A='',3(I3),''СКЛОН. D='',3(I3))') ICD
       ENDIF
             IF(DSHAG.GT.3600) DSHAG=3600.0
             IF(DSHAG.LT.1) DSHAG=1.0
