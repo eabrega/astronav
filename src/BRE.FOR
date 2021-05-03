@@ -83,18 +83,18 @@
  !         WRITE(LN,'(''       ВЫБРАН ИСТОЧНИК:'')')
  !         WRITE(LN,'('' ВОСХ. A='',3(I3),''СКЛОН. D='',3(I3))') ICD
  !     ENDIF
- !           IF(DSHAG.GT.3600) DSHAG=3600.0
- !           IF(DSHAG.LT.1) DSHAG=1.0
- !           WRITE(*,'('' ВВЕДИТЕ КОРДИНАТЫ''/
- !    * '' ДОЛГОТА (ГРАД), ШИРОТА (ГРАД)'')')
- !        READ(*,*) DGT00,SHR00
+            IF(DSHAG.GT.3600) DSHAG=3600.0
+            IF(DSHAG.LT.1) DSHAG=1.0
+            WRITE(*,'('' ВВЕДИТЕ КОРДИНАТЫ''/
+     * '' ДОЛГОТА (ГРАД), ШИРОТА (ГРАД)'')')
+         READ(*,*) DGT00,SHR00
 100      FORMAT(1X,A1,A10,' T=',3I3,' A=',F6.2,' H=',F6.2)
 101      FORMAT(2X,A10,' ALF=',3I3,' DEL=',3I3,' D=',F6.2,' F=',F5.2)
         !   DGT00=37.8
         !   SHR00=55.9
             DGT=PI0*DGT00/180.0
             SHR=PI0*SHR00/180.0
-            IFLAG=1
+            IFLAG=0
             CALL DATAJD(T(1),T(2),T(3),0,0,0,JD0)
             JDKON=JD+DEN
       DO WHILE(JD.LE.JDKON)
@@ -107,7 +107,7 @@
             JD=JD+DZ*5.0D0/864.0D0
             IF(ALF.LT.0) ALF=ALF+2.0D0*PI
             IF(IFLAG.EQ.0) THEN
-            WRITE(LN,'(5X,''ДАТА: '',3I4)') T(1),T(2),T(3)
+   !         WRITE(LN,'(5X,''ДАТА: '',3I4)') T(1),T(2),T(3)
           WRITE(LN,*) 180.0*DGT/PI0,180.0*SHR/PI0
             CALL GRADUS(SNGL(180.0D0*ALF/PI)/15.0,ICD(1),ICD(2),ICD(3))
             CALL GRADUS(SNGL(180.0D0*DEL/PI),ICD(4),ICD(5),ICD(6))
