@@ -3,7 +3,7 @@
      *DZ,DEN,R,S(3),V,E,EP,JT,PI,Q0,Q
             REAL*4 A(20),U(20),X
             INTEGER*4 T(6),ICD(6),II(8)
-            CHARACTER ISTOK*5,BUFER*70,TEXT*80,IT*5
+            CHARACTER ISTOK*5,BUFER*70,TEXT*80,IT*5,LN*1
             PI=4.0D0*DATAN(1.0D0)
             PI0=SNGL(PI)
             IT(1:1)='+'
