@@ -331,7 +331,8 @@
      *TAN(DEL0)*COS(SHR))))/PI0
             SINH=SIN(SHR)*SIN(DEL0)+COS(SHR)*COS(DEL0)*COS(H)
             U(18)=180.0*ATAN(SINH/SQRT(1.0-SINH**2))/PI0
-            IF(II(8).EQ.8.AND.IFLAG.NE.0) WRITE(LN,100)
+            IF(II(8).EQ.8.AND.IFLAG.NE.0)THEN 
+            WRITE(LN,100)
      *IT(4:4),TEXT(71:80),T(4),T(5),T(6),A(18),U(18)
             IF(U(18)*U(8).LT.0.AND.A(18).LT.180.0) WRITE(LN,100)
      *IT(1:1),TEXT(71:80),T(4),T(5),T(6),A(18),U(18)
@@ -342,6 +343,7 @@
      *IT(3:3),TEXT(71:80),T(4),T(5),T(6),A(18),U(18)
             U(8)=U(18)
             A(8)=A(18)
+            ENDIF
             IFLAG=1
             JT=JT+DSHAG/86400.0+0.000005
             IF(JT.GT.1.0D0) THEN
