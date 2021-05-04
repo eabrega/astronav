@@ -129,9 +129,9 @@
             IF(A(11).GT.180.0.AND.A(1).LT.180.0.AND.A(1).NE.0) 
      * WRITE(LN,100)
      *IT(3:3),TEXT(1:10),T(4),T(5),T(6),A(11),U(11)
+            ENDIF
             U(1)=U(11)
             A(1)=A(11)
-            ENDIF
 ***********-ВЕНЕРА-**********************************************
             CALL VENERA(JD,LAMB,BET,ALF,DEL,DZ,DSE,DSP)
             JD=JD-DZ*5.0D0/864.0D0
@@ -158,9 +158,9 @@
             IF(A(12).GT.180.0.AND.A(2).LT.180.0.AND.A(2).NE.0) 
      *WRITE(LN,100)
      *IT(3:3),TEXT(11:20),T(4),T(5),T(6),A(12),U(12)
+            ENDIF
             U(2)=U(12)
             A(2)=A(12)
-            ENDIF
 !***********-МАРС-**********************************************
             CALL MARS(JD,LAMB,BET,ALF,DEL,DZ,DSE,DSP)
             JD=JD-DZ*5.0D0/864.0D0
@@ -187,9 +187,9 @@
             IF(A(13).GT.180.0.AND.A(3).LT.180.0.AND.A(3).NE.0) 
      *WRITE(LN,100)
      *IT(3:3),TEXT(21:30),T(4),T(5),T(6),A(13),U(13)
+            ENDIF
             U(3)=U(13)
             A(3)=A(13)
-            ENDIF
 ***********-ЮПИТЕР-**********************************************
             CALL UPITER(JD,LAMB,BET,ALF,DEL,DZ,DSE,DSP)
             JD=JD-DZ*5.0D0/864.0D0
@@ -216,9 +216,9 @@
             IF(A(14).GT.180.0.AND.A(4).LT.180.0.AND.A(4).NE.0) 
      *WRITE(LN,100)
      *IT(3:3),TEXT(31:40),T(4),T(5),T(6),A(14),U(14)
+            ENDIF
             U(4)=U(14)
             A(4)=A(14)
-            ENDIF
 ***********-САТУРН-**********************************************
             CALL SATURN(JD,LAMB,BET,ALF,DEL,DZ,DSE,DSP)
             JD=JD-DZ*5.0D0/864.0D0
@@ -245,9 +245,9 @@
             IF(A(15).GT.180.0.AND.A(5).LT.180.0.AND.A(5).NE.0) 
      *WRITE(LN,100)
      *IT(3:3),TEXT(41:50),T(4),T(5),T(6),A(15),U(15)
+            ENDIF
             U(5)=U(15)
             A(5)=A(15)
-            ENDIF
 **********-ЛУНА-**********************************************
             CALL LUNA(JD,LAMB,BET,PAR,ALF,DEL,RZ,FAS)
             ALF0=SNGL(PI*ALF/180.0D0)
@@ -286,9 +286,9 @@
             IF(A(16).GT.180.0.AND.A(6).LT.180.0.AND.A(6).NE.0) 
      *WRITE(LN,100)
      *IT(3:3),TEXT(51:60),T(4),T(5),T(6),A(16),U(16)
+            ENDIF
             U(6)=U(16)
             A(6)=A(16)
-            ENDIF
 ***********-СОЛНЦЕ-**********************************************
             CALL GELIOS(JD,R,S,V,E,EP)
             JD=JD-R*5.0D0/864.0D0
@@ -320,9 +320,9 @@
             IF(A(17).GT.180.0.AND.A(7).LT.180.0.AND.A(7).NE.0) 
      *WRITE(LN,100)
      *IT(3:3),TEXT(61:70),T(4),T(5),T(6),A(17),U(17)
+            ENDIF
             U(7)=U(17)
             A(7)=A(17)
-            ENDIF
 ***********-ИСТОЧНИК-**********************************************
             ALF0=PI0*CI1/180.0
             DEL0=PI0*CI2/180.
@@ -341,9 +341,9 @@
             IF(A(18).GT.180.0.AND.A(8).LT.180.0.AND.A(8).NE.0) 
      *WRITE(LN,100)
      *IT(3:3),TEXT(71:80),T(4),T(5),T(6),A(18),U(18)
+            ENDIF
             U(8)=U(18)
             A(8)=A(18)
-            ENDIF
             IFLAG=1
             JT=JT+DSHAG/86400.0+0.000005
             IF(JT.GT.1.0D0) THEN
