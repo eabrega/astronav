@@ -177,7 +177,8 @@
      *TAN(SNGL(DEL))*COS(SHR))))/PI0
             SINH=SIN(SHR)*SIN(SNGL(DEL))+COS(SHR)*COS(SNGL(DEL))*COS(H)
             U(13)=180.0*ATAN(SINH/SQRT(1.0-SINH**2))/PI0
-            IF(II(3).EQ.3.AND.IFLAG.NE.0) WRITE(LN,100)
+            IF(II(3).EQ.3.AND.IFLAG.NE.0) THEN
+            WRITE(LN,100)
      *IT(4:4),TEXT(21:30),T(4),T(5),T(6),A(13),U(13)
             IF(U(13)*U(3).LT.0.AND.A(13).LT.180.0) WRITE(LN,100)
      *IT(1:1),TEXT(21:30),T(4),T(5),T(6),A(13),U(13)
@@ -188,6 +189,7 @@
      *IT(3:3),TEXT(21:30),T(4),T(5),T(6),A(13),U(13)
             U(3)=U(13)
             A(3)=A(13)
+            ENDIF
 ***********-ЮПИТЕР-**********************************************
             CALL UPITER(JD,LAMB,BET,ALF,DEL,DZ,DSE,DSP)
             JD=JD-DZ*5.0D0/864.0D0
