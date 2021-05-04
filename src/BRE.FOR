@@ -119,7 +119,7 @@
      *TAN(SNGL(DEL))*COS(SHR))))/PI0
             SINH=SIN(SHR)*SIN(SNGL(DEL))+COS(SHR)*COS(SNGL(DEL))*COS(H)
             U(11)=180.0*ATAN(SINH/SQRT(1.0-SINH**2))/PI0
-            IF(II(1).EQ.1.AND.IFLAG.NE.0) 
+            IF(II(1).EQ.1.AND.IFLAG.NE.0) THEN
             WRITE(LN,100)
      *IT(4:4),TEXT(1:10),T(4),T(5),T(6),A(11),U(11)
             IF(U(11)*U(1).LT.0.AND.A(11).LT.180.0) WRITE(LN,100)
