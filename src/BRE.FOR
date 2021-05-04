@@ -95,7 +95,7 @@
         !   SHR00=55.9
             DGT=PI0*DGT00/180.0
             SHR=PI0*SHR00/180.0
-            IFLAG=1
+            IFLAG=0
             CALL DATAJD(T(1),T(2),T(3),0,0,0,JD0)
             JDKON=JD+DEN
       DO WHILE(JD.LE.JDKON)
@@ -330,11 +330,11 @@
             A(8)=A(18)
             IFLAG=1
             JT=JT+DSHAG/86400.0+0.000005
-            IF(JT.GT.1.0D0) THEN
-            JT=0.0D0
-            IFLAG=0
-            WRITE(*,'(''**********'',6I4)') T
-            ENDIF
+     !       IF(JT.GT.1.0D0) THEN
+     !       JT=0.0D0
+     !       IFLAG=0
+     !       WRITE(*,'(''**********'',6I4)') T
+     !       ENDIF
             JD=JD+DSHAG/86400.0+0.000005
             CALL JDDATA(JD,T(1),T(2),T(3),T(4),T(5),T(6))
       ENDDO
