@@ -206,7 +206,8 @@
      *TAN(SNGL(DEL))*COS(SHR))))/PI0
             SINH=SIN(SHR)*SIN(SNGL(DEL))+COS(SHR)*COS(SNGL(DEL))*COS(H)
             U(14)=180.0*ATAN(SINH/SQRT(1.0-SINH**2))/PI0
-            IF(II(4).EQ.4.AND.IFLAG.NE.0) WRITE(LN,100)
+            IF(II(4).EQ.4.AND.IFLAG.NE.0) THEN
+            WRITE(LN,100)
      *IT(4:4),TEXT(31:40),T(4),T(5),T(6),A(14),U(14)
             IF(U(14)*U(4).LT.0.AND.A(14).LT.180.0) WRITE(LN,100)
      *IT(1:1),TEXT(31:40),T(4),T(5),T(6),A(14),U(14)
@@ -217,6 +218,7 @@
      *IT(3:3),TEXT(31:40),T(4),T(5),T(6),A(14),U(14)
             U(4)=U(14)
             A(4)=A(14)
+            ENDIF
 ***********-САТУРН-**********************************************
             CALL SATURN(JD,LAMB,BET,ALF,DEL,DZ,DSE,DSP)
             JD=JD-DZ*5.0D0/864.0D0
@@ -233,7 +235,8 @@
      *TAN(SNGL(DEL))*COS(SHR))))/PI0
             SINH=SIN(SHR)*SIN(SNGL(DEL))+COS(SHR)*COS(SNGL(DEL))*COS(H)
             U(15)=180.0*ATAN(SINH/SQRT(1.0-SINH**2))/PI0
-            IF(II(5).EQ.5.AND.IFLAG.NE.0) WRITE(LN,100)
+            IF(II(5).EQ.5.AND.IFLAG.NE.0) THEN
+            WRITE(LN,100)
      *IT(4:4),TEXT(41:50),T(4),T(5),T(6),A(15),U(15)
             IF(U(15)*U(5).LT.0.AND.A(15).LT.180.0) WRITE(LN,100)
      *IT(1:1),TEXT(41:50),T(4),T(5),T(6),A(15),U(15)
@@ -244,6 +247,7 @@
      *IT(3:3),TEXT(41:50),T(4),T(5),T(6),A(15),U(15)
             U(5)=U(15)
             A(5)=A(15)
+            ENDIF
 **********-ЛУНА-**********************************************
             CALL LUNA(JD,LAMB,BET,PAR,ALF,DEL,RZ,FAS)
             ALF0=SNGL(PI*ALF/180.0D0)
@@ -270,7 +274,8 @@
      *TAN(DEL0)*COS(SHR))))/PI0
             SINH=SIN(SHR)*SIN(DEL0)+COS(SHR)*COS(DEL0)*COS(H)
             U(16)=180.0*ATAN(SINH/SQRT(1.0-SINH**2))/PI0
-            IF(II(6).EQ.6.AND.IFLAG.NE.0) WRITE(LN,100)
+            IF(II(6).EQ.6.AND.IFLAG.NE.0) THEN
+            WRITE(LN,100)
      *IT(4:4),TEXT(51:60),T(4),T(5),T(6),A(16),U(16)
             IF((U(16)+0.831)*(U(6)+0.831).LT.0.AND.U(6).NE.0.
      *AND.A(16).LT.180.0)
@@ -283,6 +288,7 @@
      *IT(3:3),TEXT(51:60),T(4),T(5),T(6),A(16),U(16)
             U(6)=U(16)
             A(6)=A(16)
+            ENDIF
 ***********-СОЛНЦЕ-**********************************************
             CALL GELIOS(JD,R,S,V,E,EP)
             JD=JD-R*5.0D0/864.0D0
@@ -302,7 +308,8 @@
      *TAN(DEL0)*COS(SHR))))/PI0
             SINH=SIN(SHR)*SIN(DEL0)+COS(SHR)*COS(DEL0)*COS(H)
             U(17)=180.0*ATAN(SINH/SQRT(1.0-SINH**2))/PI0
-            IF(II(7).EQ.7.AND.IFLAG.NE.0) WRITE(LN,100)
+            IF(II(7).EQ.7.AND.IFLAG.NE.0)THEN 
+            WRITE(LN,100)
      *IT(4:4),TEXT(61:70),T(4),T(5),T(6),A(17),U(17)
             IF((U(17)+0.831)*(U(7)+0.831).LT.0.AND.U(7).NE.0.
      *AND.A(17).LT.180.0)
@@ -315,6 +322,7 @@
      *IT(3:3),TEXT(61:70),T(4),T(5),T(6),A(17),U(17)
             U(7)=U(17)
             A(7)=A(17)
+            ENDIF
 ***********-ИСТОЧНИК-**********************************************
             ALF0=PI0*CI1/180.0
             DEL0=PI0*CI2/180.
