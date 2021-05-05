@@ -349,7 +349,7 @@
             JT=JT+DSHAG/86400.0+0.000005
             IF(JT.GT.1.0D0) THEN
             JT=0.0D0
-            IFLAG=0
+            !IFLAG=0
             WRITE(*,'(''**********'',6I4)') T
             ENDIF
             JD=JD+DSHAG/86400.0+0.000005
