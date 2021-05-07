@@ -13,4 +13,4 @@
 
 #printf "$date\n$deep\n$interval\n$objects\n$ist\n$position\n" | ./regular 1>/dev/null
 
-printf "2020 10 10 0 0 0\n1\n3600\n50 50\n" | ./info 1>/dev/null
+printf "$1\n1\n$2\n1 2 3 4 5 6 7\n190\n37 55\n" | ./event 1>/dev/null

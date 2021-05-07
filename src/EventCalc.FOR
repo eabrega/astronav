@@ -54,6 +54,7 @@
      *A2,'","date":"',I4,5I3,'","a":',F6.2,',"h":',F6.2,'}')
             DGT=PI0*DGT00/180.0
             SHR=PI0*SHR00/180.0
+            IFLAG=0
             CALL DATAJD(T(1),T(2),T(3),0,0,0,JD0)
             JDKON=JD+DEN
       DO WHILE(JD.LE.JDKON)
@@ -70,7 +71,7 @@
      *TAN(SNGL(DEL))*COS(SHR))))/PI0
             SINH=SIN(SHR)*SIN(SNGL(DEL))+COS(SHR)*COS(SNGL(DEL))*COS(H)
             U(11)=180.0*ATAN(SINH/SQRT(1.0-SINH**2))/PI0
-            IF(II(1).EQ.1) THEN
+            IF(II(1).EQ.1.AND.IFLAG.NE.0) THEN
             IF(U(11)*U(1).LT.0.AND.A(11).LT.180.0) WRITE(LN,100)
      *IT(1:1),TEXT(1:10),T(1),T(2),T(3),T(4),T(5),T(6),A(11),U(11)
             IF(U(11)*U(1).LT.0.AND.A(11).GT.180.0) WRITE(LN,100)
@@ -92,7 +93,7 @@
      *TAN(SNGL(DEL))*COS(SHR))))/PI0
             SINH=SIN(SHR)*SIN(SNGL(DEL))+COS(SHR)*COS(SNGL(DEL))*COS(H)
             U(12)=180.0*ATAN(SINH/SQRT(1.0-SINH**2))/PI0
-            IF(II(2).EQ.2) THEN
+            IF(II(2).EQ.2.AND.IFLAG.NE.0) THEN
             IF(U(12)*U(2).LT.0.AND.A(12).LT.180.0) WRITE(LN,100)
      *IT(1:1),TEXT(11:20),T(1),T(2),T(3),T(4),T(5),T(6),A(12),U(12)
             IF(U(12)*U(2).LT.0.AND.A(12).GT.180.0) WRITE(LN,100)
@@ -114,7 +115,7 @@
      *TAN(SNGL(DEL))*COS(SHR))))/PI0
             SINH=SIN(SHR)*SIN(SNGL(DEL))+COS(SHR)*COS(SNGL(DEL))*COS(H)
             U(13)=180.0*ATAN(SINH/SQRT(1.0-SINH**2))/PI0
-            IF(II(3).EQ.3) THEN
+            IF(II(3).EQ.3.AND.IFLAG.NE.0) THEN
             IF(U(13)*U(3).LT.0.AND.A(13).LT.180.0) WRITE(LN,100)
      *IT(1:1),TEXT(21:30),T(1),T(2),T(3),T(4),T(5),T(6),A(13),U(13)
             IF(U(13)*U(3).LT.0.AND.A(13).GT.180.0) WRITE(LN,100)
@@ -136,7 +137,7 @@
      *TAN(SNGL(DEL))*COS(SHR))))/PI0
             SINH=SIN(SHR)*SIN(SNGL(DEL))+COS(SHR)*COS(SNGL(DEL))*COS(H)
             U(14)=180.0*ATAN(SINH/SQRT(1.0-SINH**2))/PI0
-            IF(II(4).EQ.4) THEN
+            IF(II(4).EQ.4.AND.IFLAG.NE.0) THEN
             IF(U(14)*U(4).LT.0.AND.A(14).LT.180.0) WRITE(LN,100)
      *IT(1:1),TEXT(31:40),T(1),T(2),T(3),T(4),T(5),T(6),A(14),U(14)
             IF(U(14)*U(4).LT.0.AND.A(14).GT.180.0) WRITE(LN,100)
@@ -158,7 +159,7 @@
      *TAN(SNGL(DEL))*COS(SHR))))/PI0
             SINH=SIN(SHR)*SIN(SNGL(DEL))+COS(SHR)*COS(SNGL(DEL))*COS(H)
             U(15)=180.0*ATAN(SINH/SQRT(1.0-SINH**2))/PI0
-            IF(II(5).EQ.5) THEN
+            IF(II(5).EQ.5.AND.IFLAG.NE.0) THEN
             IF(U(15)*U(5).LT.0.AND.A(15).LT.180.0) WRITE(LN,100)
      *IT(1:1),TEXT(41:50),T(1),T(2),T(3),T(4),T(5),T(6),A(15),U(15)
             IF(U(15)*U(5).LT.0.AND.A(15).GT.180.0) WRITE(LN,100)
@@ -188,7 +189,7 @@
      *TAN(DEL0)*COS(SHR))))/PI0
             SINH=SIN(SHR)*SIN(DEL0)+COS(SHR)*COS(DEL0)*COS(H)
             U(16)=180.0*ATAN(SINH/SQRT(1.0-SINH**2))/PI0
-            IF(II(6).EQ.6) THEN
+            IF(II(6).EQ.6.AND.IFLAG.NE.0) THEN
             IF((U(16)+0.831)*(U(6)+0.831).LT.0.AND.U(6).NE.0.
      *AND.A(16).LT.180.0)
      *WRITE(LN,100) 
@@ -216,7 +217,7 @@
      *TAN(DEL0)*COS(SHR))))/PI0
             SINH=SIN(SHR)*SIN(DEL0)+COS(SHR)*COS(DEL0)*COS(H)
             U(17)=180.0*ATAN(SINH/SQRT(1.0-SINH**2))/PI0
-            IF(II(7).EQ.7)THEN 
+            IF(II(7).EQ.7.AND.IFLAG.NE.0)THEN 
             IF((U(17)+0.831)*(U(7)+0.831).LT.0.AND.U(7).NE.0.
      *AND.A(17).LT.180.0)
      *WRITE(LN,100) 
@@ -239,7 +240,7 @@
      *TAN(DEL0)*COS(SHR))))/PI0
             SINH=SIN(SHR)*SIN(DEL0)+COS(SHR)*COS(DEL0)*COS(H)
             U(18)=180.0*ATAN(SINH/SQRT(1.0-SINH**2))/PI0
-            IF(II(8).EQ.8)THEN 
+            IF(II(8).EQ.8.AND.IFLAG.NE.0)THEN 
             IF(U(18)*U(8).LT.0.AND.A(18).LT.180.0) WRITE(LN,100)
      *IT(1:1),TEXT(71:80),T(1),T(2),T(3),T(4),T(5),T(6),A(18),U(18)
             IF(U(18)*U(8).LT.0.AND.A(18).GT.180.0) WRITE(LN,100)
@@ -250,6 +251,7 @@
             ENDIF
             U(8)=U(18)
             A(8)=A(18)
+            IFLAG=1
             JT=JT+DSHAG/86400.0+0.000005
             IF(JT.GT.1.0D0) THEN
             JT=0.0D0
