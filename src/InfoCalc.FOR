@@ -102,7 +102,10 @@
             IF(X.LT.0) X=X+360.0
             CALL GRADUS(X/15.0,ICD(1),ICD(2),ICD(3))
             CALL GRADUS(180.0*DEL0/PI0,ICD(4),ICD(5),ICD(6))
-            WRITE(LN,101) TEXT(51:60),ICD,32.5,FAS,","
+
+            DL=60.0*180.0*ATAN(3476.0/RZ/6378.160)/PI0 
+
+            WRITE(LN,101) TEXT(51:60),ICD,DL,FAS,","
             U(6)=U(16)
             A(6)=A(16)
 ***********-СОЛНЦЕ-**********************************************
@@ -115,7 +118,10 @@
             DEL0=SNGL(DATAN2(S(3),DSQRT(S(2)**2+S(1)**2)))
             CALL GRADUS(180.0*ALF0/PI0/15.0,ICD(1),ICD(2),ICD(3))
             CALL GRADUS(180.0*DEL0/PI0,ICD(4),ICD(5),ICD(6))
-            WRITE(LN,101) TEXT(61:70),ICD,32.5,1.0,""
+
+            DS=60.0*180.0*ATAN(1.392/R/149.59787)/PI0  
+
+            WRITE(LN,101) TEXT(61:70),ICD,DS,1.0,""
             WRITE(LN,'('']'')')
             U(7)=U(17)
             A(7)=A(17)
